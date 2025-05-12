@@ -102,4 +102,4 @@ postech-fase1/
 
 ## Diagrama de Arquitetura
 
-![Arquitetura do Sistema](docs/Arquitetura%20do%20Sistema.png)
+![Arquitetura do Sistema](docs/arquitetura.png)
