@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg-info/
+.eggs/
+
+# Virtualenv
+.venv/
+venv/
+ENV/
+
+# Poetry
+poetry.lock
+
+# VSCode
+.vscode/
+
+# Alembic
+backend/alembic/versions/
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# Arquivos de ambiente
+.env
+.env.*
+
+# Banco de dados
+*.sqlite3
+*.db
+
+# PlantUML/Diagramas
+*.svg
+*.png
+
+# Outros
+.DS_Store
+Thumbs.db
+.idea/
+
+# Node/Frontend
+frontend/node_modules/
+frontend/dist/ 
