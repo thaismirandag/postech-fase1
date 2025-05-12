@@ -36,7 +36,7 @@ docker-compose.override.yml
 
 # PlantUML/Diagramas
 *.svg
-*.png
+
 
 # Outros
 .DS_Store
