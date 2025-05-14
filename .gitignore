@@ -19,8 +19,6 @@ poetry.lock
 # VSCode
 .vscode/
 
-# Alembic
-backend/alembic/versions/
 
 # Docker
 *.log
