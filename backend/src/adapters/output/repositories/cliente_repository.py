@@ -1,25 +1,37 @@
+from sqlalchemy.orm import Session
 from ....ports.repositories.cliente_repository_port import ClienteRepositoryPort
 from ....domain.models.cliente import Cliente
+from ....infrastructure.db.models.cliente_model import ClienteModel
 
 client_db = {}
 next_id = 1
 
 class ClienteRepository(ClienteRepositoryPort):
-    def getClientByCPF(self, cpf) -> Cliente | None:
-        data: Cliente = client_db.get(cpf)
+    def __init__(self, db: Session):
+        self.db = db
 
-        if data:
-            return Cliente(**data)
+    def getClientByCPF(self, cpf) -> Cliente | None:
+        model = self.db.query(ClienteModel).filter_by(cpf=cpf).first()
+
+        if model:
+            return Cliente(
+                id=model.id,
+                nome=model.nome,
+                cpf=model.cpf,
+                email=model.email,
+                telefone=model.telefone
+            )
         return None
     
     def save(self, cliente: Cliente) -> None:
-        global next_id
-        cliente.id = next_id
-        client_db[cliente.cpf] = {
-            "id": cliente.id,
-            "nome": cliente.nome,
-            "cpf": cliente.cpf,
-            "email": cliente.email,
-            "telefone": cliente.telefone
-        }
-        next_id += 1
+        model = ClienteModel(
+            nome=cliente.nome,
+            cpf=cliente.cpf,
+            email=cliente.email,
+            telefone=cliente.telefone
+        )
+        self.db.add(model)
+        self.db.commit()
+        self.db.refresh(model)
+        cliente.id = model.id
+        return cliente

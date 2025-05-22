@@ -12,6 +12,6 @@ class ClientService:
         return cliente
     
     def saveClient(self, cliente: Cliente):
-        if not self.clientRepository.getClientByCPF(cliente.cpf):
-            raise ValueError("Cliente não encontrado")
-        self.clientRepository.save(cliente)
+        if self.clientRepository.getClientByCPF(cliente.cpf):
+            raise ValueError("Cliente já cadastrado")
+        return self.clientRepository.save(cliente)
