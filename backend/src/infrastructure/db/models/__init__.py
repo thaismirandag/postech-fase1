@@ -1,10 +1,10 @@
-from infrastructure.db.models.cliente_model import ClienteModel
-from infrastructure.db.models.pedido_model import (
+from .cliente_model import ClienteModel
+from .pedido_model import (
     FilaPedidosModel,
     ItemPedidoModel,
     PedidoModel,
 )
-from infrastructure.db.models.produto_model import ProdutoModel
+from .produto_model import ProdutoModel
 
 __all__ = [
     "ClienteModel",
