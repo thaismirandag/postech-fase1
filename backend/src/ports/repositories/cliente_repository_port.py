@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
-from ...domain.models.cliente import Cliente
+
+from src.domain.models.cliente import Cliente
+
 
 class ClienteRepositoryPort(ABC):
     @abstractmethod
-    def getClientByCPF(self, cpf: str) -> Cliente | None:
+    def buscar_por_cpf(self, cpf: str) -> Cliente | None:
         pass
 
     @abstractmethod
-    def save(self, cliente: Cliente) -> None:
+    def salvar(self, cliente: Cliente) -> Cliente:
         pass

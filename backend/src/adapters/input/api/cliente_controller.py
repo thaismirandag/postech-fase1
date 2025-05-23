@@ -1,35 +1,21 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from ....infrastructure.db.session import SessionLocal
-from .cliente_dto import ClienteRequestDTO, ClienteResponseDTO
-from ...output.repositories.cliente_repository import ClienteRepository
-from ....application.services.cliente_service import ClientService
-from ....domain.models.cliente import Cliente
 
-router = APIRouter()
+from src.adapters.input.dto.cliente_dto import ClienteCreate, ClienteResponse
+from src.adapters.output.repositories.cliente_repository import ClienteRepository
+from src.application.services.cliente_service import ClienteService
+from src.infrastructure.db.session import get_db
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+router = APIRouter(prefix="/api/clientes", tags=["Clientes"])
 
-@router.get("/client/{cpf}", response_model=ClienteResponseDTO)
-def getClientByCPF(cpf: str, db: Session = Depends(get_db)):
-    service = ClientService(ClienteRepository(db))
-    try:
-        cliente = service.getClientByCPF(cpf)
-        return ClienteResponseDTO(**cliente.__dict__)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+def get_cliente_service(db: Session = Depends(get_db)) -> ClienteService:
+    repository = ClienteRepository(db)
+    return ClienteService(repository)
 
-@router.post("/client", response_model=ClienteResponseDTO, status_code=201)
-def saveClient(dto: ClienteRequestDTO, db: Session = Depends(get_db)):
-    service = ClientService(ClienteRepository(db))
-    try:
-        cliente = Cliente(id=None, **dto.dict())
-        cliente = service.saveClient(cliente)
-        return ClienteResponseDTO(**cliente.__dict__)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+@router.post("/", response_model=ClienteResponse, summary="Criar cliente")
+def criar_cliente(cliente: ClienteCreate, service: ClienteService = Depends(get_cliente_service)):
+    return service.criar_cliente(cliente)
+
+@router.get("/{cpf}", response_model=ClienteResponse, summary="Buscar cliente por CPF")
+def buscar_cliente(cpf: str, service: ClienteService = Depends(get_cliente_service)):
+    return service.buscar_cliente_por_cpf(cpf)

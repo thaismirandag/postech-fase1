@@ -3,7 +3,8 @@ import uuid
 from sqlalchemy import Column, Float, String
 from sqlalchemy.dialects.postgresql import UUID
 
-from .base import Base
+from src.infrastructure.db.session import Base
+
 
 class ProdutoModel(Base):
     __tablename__ = "produtos"

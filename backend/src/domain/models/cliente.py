@@ -1,8 +1,11 @@
+from dataclasses import dataclass
+from uuid import UUID
 
+
+@dataclass
 class Cliente:
-    def __init__(self, id, nome, cpf, email, telefone=None):
-        self.id = id
-        self.nome = nome
-        self.cpf = cpf
-        self.email = email
-        self.telefone = telefone
+    id: UUID
+    nome: str
+    cpf: str
+    email: str
+    telefone: str | None = None
