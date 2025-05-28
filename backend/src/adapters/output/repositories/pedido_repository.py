@@ -1,7 +1,9 @@
 from uuid import UUID
+
 from sqlalchemy.orm import Session
-from src.domain.models.pedido import Pedido, ItemPedido
-from src.infrastructure.db.models.pedido_model import PedidoModel, ItemPedidoModel
+
+from src.domain.models.pedido import ItemPedido, Pedido
+from src.infrastructure.db.models.pedido_model import ItemPedidoModel, PedidoModel
 from src.ports.repositories.pedido_repository_port import PedidoRepositoryPort
 
 
@@ -10,16 +12,24 @@ class PedidoRepository(PedidoRepositoryPort):
         self.db = db
 
     def salvar(self, pedido: Pedido) -> Pedido:
-        pedido_model = PedidoModel(
-            id=pedido.id, cliente_id=pedido.cliente_id, status=pedido.status
-        )
+        pedido_model = self.db.query(PedidoModel).filter_by(id=pedido.id).first()
 
-        self.db.add(pedido_model)
+        if not pedido_model:
+            pedido_model = PedidoModel(
+                id=pedido.id,
+                cliente_id=pedido.cliente_id,
+                status=pedido.status,
+                data_criacao=pedido.data_criacao,
+            )
+            self.db.add(pedido_model)
+        else:
+            pedido_model.status = pedido.status
 
-        # Adiciona itens do pedido
+
+        self.db.query(ItemPedidoModel).filter_by(pedido_id=pedido.id).delete()
         for item in pedido.itens:
             item_model = ItemPedidoModel(
-                pedido_id=pedido_model.id,
+                pedido_id=pedido.id,
                 produto_id=item.produto_id,
                 quantidade=item.quantidade,
             )
@@ -27,7 +37,7 @@ class PedidoRepository(PedidoRepositoryPort):
 
         self.db.commit()
         self.db.refresh(pedido_model)
-        return pedido
+        return self._converter_para_entidade(pedido_model)
 
     def listar(self) -> list[Pedido]:
         pedidos_model = self.db.query(PedidoModel).all()

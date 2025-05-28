@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
-from typing import List, Optional
+
 from src.domain.models.pedido import Pedido
 
 
@@ -10,11 +10,11 @@ class PedidoRepositoryPort(ABC):
         pass
 
     @abstractmethod
-    def listar(self) -> List[Pedido]:
+    def listar(self) -> list[Pedido]:
         pass
 
     @abstractmethod
-    def buscar_por_id(self, pedido_id: UUID) -> Optional[Pedido]:
+    def buscar_por_id(self, pedido_id: UUID) -> Pedido | None:
         pass
 
     @abstractmethod
@@ -22,5 +22,9 @@ class PedidoRepositoryPort(ABC):
         pass
 
     @abstractmethod
-    def buscar_por_cliente(self, cliente_id: UUID) -> List[Pedido]:
+    def buscar_por_cliente(self, cliente_id: UUID) -> list[Pedido]:
+        pass
+
+    @abstractmethod
+    def atualizar_status(self, pedido_id: UUID, status: str) -> Pedido:
         pass

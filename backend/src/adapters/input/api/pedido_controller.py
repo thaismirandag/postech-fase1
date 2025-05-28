@@ -1,19 +1,16 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
 from uuid import UUID
 
-from src.adapters.input.dto.pedido_dto import PedidoCreate, PedidoResponse
-from src.adapters.output.repositories.pedido_repository import PedidoRepository
+from fastapi import APIRouter, Depends
+
+from src.adapters.input.api.dependencies import get_pedido_service
+from src.adapters.input.dto.pedido_dto import (
+    AtualizarStatusPedidoDTO,
+    PedidoCreate,
+    PedidoResponse,
+)
 from src.application.services.pedido_service import PedidoService
-from src.infrastructure.db.session import get_db
 
 router = APIRouter(prefix="/api/pedidos", tags=["Pedidos"])
-
-
-# Função para injetar dependência do serviço
-def get_pedido_service(db: Session = Depends(get_db)) -> PedidoService:
-    repository = PedidoRepository(db)
-    return PedidoService(repository)
 
 
 @router.post("/", response_model=PedidoResponse, summary="Criar Pedido")
@@ -59,3 +56,12 @@ def deletar_pedido(
     service: PedidoService = Depends(get_pedido_service),
 ):
     service.deletar_pedido(pedido_id)
+
+
+@router.patch("/{pedido_id}/status", response_model=PedidoResponse, summary="Atualizar Status do Pedido")
+def atualizar_status_pedido(
+    pedido_id: UUID,
+    dto: AtualizarStatusPedidoDTO,
+    service: PedidoService = Depends(get_pedido_service),
+):
+    return service.atualizar_status_pedido(pedido_id, dto.status)

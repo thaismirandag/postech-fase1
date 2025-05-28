@@ -1,16 +1,10 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
 
+from src.adapters.input.api.dependencies import get_produto_service
 from src.adapters.input.dto.produto_dto import ProdutoCreate, ProdutoResponse
-from src.adapters.output.repositories.produto_repository import ProdutoRepository
 from src.application.services.produto_service import ProdutoService
-from src.infrastructure.db.session import get_db
 
 router = APIRouter(prefix="/api/produtos", tags=["Produtos"])
-
-def get_produto_service(db: Session = Depends(get_db)) -> ProdutoService:
-    repository = ProdutoRepository(db)
-    return ProdutoService(repository)
 
 @router.post("/", response_model=ProdutoResponse, summary="Criar Produto")
 def criar_produto(

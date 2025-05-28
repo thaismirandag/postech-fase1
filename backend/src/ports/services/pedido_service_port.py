@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
-from typing import Optional, List
 
 from src.adapters.input.dto.pedido_dto import PedidoCreate, PedidoResponse
+from src.domain.models.pedido import StatusPedido
 
 
 class PedidoServicePort(ABC):
@@ -11,11 +11,11 @@ class PedidoServicePort(ABC):
         pass
 
     @abstractmethod
-    def buscar_pedido_por_id(self, pedido_id: UUID) -> Optional[PedidoResponse]:
+    def buscar_pedido_por_id(self, pedido_id: UUID) -> PedidoResponse | None:
         pass
 
     @abstractmethod
-    def listar_pedidos(self) -> List[PedidoResponse]:
+    def listar_pedidos(self) -> list[PedidoResponse]:
         pass
 
     @abstractmethod
@@ -23,5 +23,9 @@ class PedidoServicePort(ABC):
         pass
 
     @abstractmethod
-    def buscar_pedidos_por_cliente(self, cliente_id: UUID) -> List[PedidoResponse]:
+    def buscar_pedidos_por_cliente(self, cliente_id: UUID) -> list[PedidoResponse]:
+        pass
+
+    @abstractmethod
+    def atualizar_status_pedido(self, pedido_id: UUID, novo_status: StatusPedido) -> PedidoResponse:
         pass

@@ -1,8 +1,9 @@
-from uuid import UUID
 from datetime import datetime
-from typing import List
+from uuid import UUID
 
 from pydantic import BaseModel
+
+from src.domain.models.pedido import StatusPedido
 
 
 class ItemPedidoDTO(BaseModel):
@@ -12,12 +13,16 @@ class ItemPedidoDTO(BaseModel):
 
 class PedidoCreate(BaseModel):
     cliente_id: UUID
-    itens: List[ItemPedidoDTO]
+    itens: list[ItemPedidoDTO]
 
 
 class PedidoResponse(BaseModel):
     id: UUID
     cliente_id: UUID
-    status: str
+    status: StatusPedido
     data_criacao: datetime
-    itens: List[ItemPedidoDTO]
+    itens: list[ItemPedidoDTO]
+
+
+class AtualizarStatusPedidoDTO(BaseModel):
+    status: StatusPedido
