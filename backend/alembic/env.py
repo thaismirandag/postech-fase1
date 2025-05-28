@@ -1,14 +1,20 @@
 import os
 import sys
+from pathlib import Path
 
 from alembic import context
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
-from src.infrastructure.db.models.base import Base
-from src.infrastructure.db.models import *
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(ROOT_DIR))
+
+from src.infrastructure.db.session import Base
+from src.infrastructure.db.models import ClienteModel, ProdutoModel, PedidoModel, ItemPedidoModel, FilaPedidosModel
+
+
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

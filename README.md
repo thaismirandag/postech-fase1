@@ -1,29 +1,46 @@
-# Tech Challenge - Sistema de Autoatendimento de Fast Food
+# 🧾 Tech Challenge - Sistema de Autoatendimento de Fast Food
 
-Este projeto é um sistema de autoatendimento para uma lanchonete, desenvolvido como parte do Tech Challenge da fase 1.
+Este projeto é um sistema de autoatendimento para uma lanchonete, desenvolvido como parte do Tech Challenge da fase 1. O sistema visa facilitar o controle de pedidos, gerenciamento de produtos, e simulação de pagamento via QR Code do Mercado Pago.
 
-## Tecnologias Utilizadas
 
+## ⚙️ Tecnologias Utilizadas
+
+- Python 3.11
 - FastAPI
-- PostgreSQL
 - SQLAlchemy
 - Alembic
+- PostgreSQL
+- Docker & Docker Compose
+- Pydantic
+
+
+---
+
+## 🧩 Arquitetura Hexagonal
+
+O projeto segue os princípios da arquitetura hexagonal (Ports & Adapters), dividindo as responsabilidades entre camadas:    
+- `domain/`: Entidades e regras de negócio puras
+- `application/services/`: Orquestração da lógica
+- `ports/`: Interfaces de entrada e saída
+- `adapters/input/`: Controllers (FastAPI)
+- `adapters/output/`: Implementações de repositórios
+- `infrastructure/db/`: Modelos ORM e config de banco
+
+---
+
+## 🚀 Como executar o projeto
+
+### 📦 Pré-requisitos
+
 - Docker
 - Docker Compose
 
-## Requisitos
-
-- Docker
-- Docker Compose
-
-## Como Executar
+### ▶️ Subindo o ambiente
 
 ### 1. Clone o repositório:
 ```bash
-git clone [URL_DO_REPOSITORIO]
-cd [NOME_DO_DIRETORIO]
+git clone https://github.com/thaismirandag/postech-fase1.git
 ```
-
 ### 2. Configure as variáveis de ambiente:
 Crie um arquivo `.env` na pasta `backend` com base no `.env-example`.
 
@@ -32,17 +49,17 @@ Crie um arquivo `.env` na pasta `backend` com base no `.env-example`.
 docker-compose up --build
 ```
 
-### 4. Acesse a documentação da API:
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+### 🌐 Acesso
+- API: http://localhost:8000
+- Documentação Swagger: http://localhost:8000/docs
 
-### 5. (Opcional) Rodar as migrações Alembic manualmente
+### 4. (Opcional) Rodar as migrações Alembic manualmente
 Se precisar rodar as migrações manualmente, execute:
 ```bash
 docker-compose exec app poetry run alembic upgrade head
 ```
 
-### 6. Gerar uma nova migração Alembic (após criar/alterar um model)
+### 5. Gerar uma nova migração Alembic (após criar/alterar um model)
 Sempre que criar ou alterar um modelo de persistência, gere uma nova migração com:
 ```bash
 docker-compose exec app poetry run alembic revision --autogenerate -m "sua mensagem de migração"
@@ -52,7 +69,7 @@ Depois, aplique a migração normalmente:
 docker-compose exec app poetry run alembic upgrade head
 ```
 
-### 7. Rodar o Ruff (Linter)
+### 6. Rodar o Ruff (Linter)
 Para verificar a qualidade e padronização do código Python, utilize o Ruff:
 ```bash
 docker-compose exec app poetry run ruff check src/
@@ -92,14 +109,30 @@ postech-fase1/
 
 ```
 
-## Funcionalidades
+## 🔗 Endpoints principais
 
-- Cadastro e identificação de clientes
-- Gerenciamento de produtos e categorias
-- Sistema de pedidos
-- Acompanhamento de pedidos
-- Integração com Mercado Pago (MVP)
+### Clientes
+- `POST /api/clientes/` – Criar cliente
+- `GET /api/clientes/{cpf}` – Buscar cliente por CPF
 
-## Diagrama de Arquitetura
+### Produtos
+- `POST /api/produtos/` – Criar produto
+- `GET /api/produtos/categoria/{categoria}` – Buscar produtos por categoria
 
-![Arquitetura do Sistema](docs/arquitetura.png)
+### Pedidos
+- `POST /api/pedidos/` – Criar pedido (checkout fake)
+- `GET /api/pedidos/` – Listar todos os pedidos
+- `PATCH /api/pedidos/{id}/status` – Atualizar status do pedido
+
+### Pagamento
+- `POST /api/pagamentos/gerar-qrcode` – Simula geração de QR Code (Mercado Pago)
+
+
+## 👥 Desenvolvedores
+
+- Integrantes do Grupo: @thaismirandag, @murilobiss, @MathLuchiari
+
+## 📄 Documentação
+
+- [Documentação do Projeto](docs/README.md)
+- [Diagrama de Arquitetura](docs/arquitetura.png)

@@ -2,8 +2,9 @@ import uvicorn
 from fastapi import FastAPI
 
 from src.adapters.input.api.cliente_controller import router as cliente_router
-from src.adapters.input.api.produto_controller import router as produto_router
 from src.adapters.input.api.pedido_controller import router as pedido_router
+from src.adapters.input.api.produto_controller import router as produto_router
+from src.adapters.input.api.pagamento_controller import router as pagamento_router
 from src.infrastructure.db.session import Base, engine
 
 Base.metadata.create_all(bind=engine)
@@ -18,6 +19,7 @@ app = FastAPI(
 app.include_router(cliente_router)
 app.include_router(produto_router)
 app.include_router(pedido_router)
+app.include_router(pagamento_router)
 
 @app.get("/")
 async def root():
