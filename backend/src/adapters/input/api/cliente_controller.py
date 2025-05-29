@@ -4,7 +4,7 @@ from src.adapters.input.api.dependencies import get_cliente_service
 from src.adapters.input.dto.cliente_dto import ClienteCreate, ClienteResponse
 from src.application.services.cliente_service import ClienteService
 
-router = APIRouter(prefix="/api/clientes", tags=["Clientes"])
+router = APIRouter(prefix="/v1/api/clientes", tags=["Clientes"])
 
 
 @router.post("/", response_model=ClienteResponse, summary="Criar cliente")

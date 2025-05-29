@@ -8,8 +8,8 @@ from sqlalchemy.orm import relationship
 from src.infrastructure.db.session import Base
 
 
-class PedidoModel(Base):
-    __tablename__ = "pedidos"
+class PagamentoModel(Base):
+    __tablename__ = "pagamentos"
     id = Column(
         UUID(as_uuid=True),
         primary_key=True,
@@ -17,10 +17,10 @@ class PedidoModel(Base):
         unique=True,
         nullable=False,
     )
-    cliente_id = Column(UUID(as_uuid=True), ForeignKey("clientes.id"), nullable=False)
+    pedido_id = Column(UUID(as_uuid=True), ForeignKey("pedidos.id"), nullable=False)
     status = Column(String, default="pendente", nullable=False)
     data_criacao = Column(DateTime, default=datetime.utcnow)
-    itens = relationship("ItemPedidoModel", back_populates="pedido")
-    pagamento = relationship("PagamentoModel", back_populates="pedido", uselist=False)
+    data_confirmacao = Column(DateTime, nullable=True)
+    pedido = relationship("PedidoModel", back_populates="pagamento")
 
 

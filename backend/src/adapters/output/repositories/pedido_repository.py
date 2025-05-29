@@ -3,7 +3,8 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 
 from src.domain.models.pedido import ItemPedido, Pedido
-from src.infrastructure.db.models.pedido_model import ItemPedidoModel, PedidoModel
+from src.infrastructure.db.models.pedido_model import PedidoModel
+from src.infrastructure.db.models.item_pedido_model import ItemPedidoModel
 from src.ports.repositories.pedido_repository_port import PedidoRepositoryPort
 
 

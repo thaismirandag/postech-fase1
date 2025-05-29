@@ -1,5 +1,6 @@
 from fastapi import Depends
 from sqlalchemy.orm import Session
+
 from src.adapters.output.repositories.cliente_repository import ClienteRepository
 from src.adapters.output.repositories.pedido_repository import PedidoRepository
 from src.adapters.output.repositories.produto_repository import ProdutoRepository
@@ -11,6 +12,7 @@ from src.infrastructure.db.session import get_db
 from src.ports.services.cliente_service_port import ClienteServicePort
 from src.ports.services.pagamento_service_port import PagamentoServicePort
 from src.ports.services.produto_service_port import ProdutoServicePort
+
 
 def get_cliente_service(db: Session = Depends(get_db)) -> ClienteServicePort:
     cliente_repository = ClienteRepository(db)

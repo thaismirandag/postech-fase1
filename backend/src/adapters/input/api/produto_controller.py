@@ -4,7 +4,7 @@ from src.adapters.input.api.dependencies import get_produto_service
 from src.adapters.input.dto.produto_dto import ProdutoCreate, ProdutoResponse
 from src.application.services.produto_service import ProdutoService
 
-router = APIRouter(prefix="/api/produtos", tags=["Produtos"])
+router = APIRouter(prefix="/v1/api/produtos", tags=["Produtos"])
 
 @router.post("/", response_model=ProdutoResponse, summary="Criar Produto")
 def criar_produto(

@@ -10,7 +10,7 @@ from src.adapters.input.dto.pedido_dto import (
 )
 from src.application.services.pedido_service import PedidoService
 
-router = APIRouter(prefix="/api/pedidos", tags=["Pedidos"])
+router = APIRouter(prefix="/v1/api/pedidos", tags=["Pedidos"])
 
 
 @router.post("/", response_model=PedidoResponse, summary="Criar Pedido")
