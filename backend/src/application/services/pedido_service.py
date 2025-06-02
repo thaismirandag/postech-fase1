@@ -1,5 +1,4 @@
 from uuid import UUID
-
 from src.adapters.input.dto.pedido_dto import (
     ItemPedidoDTO,
     PedidoCreate,
@@ -7,23 +6,29 @@ from src.adapters.input.dto.pedido_dto import (
 )
 from src.domain.models.pedido import ItemPedido, Pedido, StatusPedido
 from src.ports.repositories.pedido_repository_port import PedidoRepositoryPort
+from src.ports.repositories.fila_pedidos_repository_port import FilaPedidosRepositoryPort
 from src.ports.services.pedido_service_port import PedidoServicePort
 
 
 class PedidoService(PedidoServicePort):
-    def __init__(self, repository: PedidoRepositoryPort):
+    def __init__(
+        self,
+        repository: PedidoRepositoryPort,
+        fila_repository: FilaPedidosRepositoryPort,
+    ):
         self.repository = repository
+        self.fila_repository = fila_repository
 
     def criar_pedido(self, pedido_create: PedidoCreate) -> PedidoResponse:
-        # Converte os itens do DTO para objetos de domínio
         itens = [
             ItemPedido(produto_id=item.produto_id, quantidade=item.quantidade)
             for item in pedido_create.itens
         ]
 
         pedido = Pedido.criar(cliente_id=pedido_create.cliente_id, itens=itens)
-
         pedido = self.repository.salvar(pedido)
+        self.fila_repository.enfileirar(pedido.id)  # integração com fila
+
         return self._to_response(pedido)
 
     def buscar_pedido_por_id(self, pedido_id: UUID) -> PedidoResponse | None:

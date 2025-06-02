@@ -7,7 +7,7 @@ from src.infrastructure.db.session import Base
 
 
 class ClienteModel(Base):
-    __tablename__ = "clientes"
+    __tablename__ = "tb_clientes"
     id = Column(
         UUID(as_uuid=True),
         primary_key=True,

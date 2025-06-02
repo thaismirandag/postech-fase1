@@ -1,30 +1,22 @@
-from datetime import datetime
-from enum import Enum
+from datetime import datetime, timezone
+from typing import Optional, List
+from uuid import UUID
 
-
-class StatusPedido(str, Enum):
-    RECEBIDO = "Recebido"
-    PAGO = "Pago"
-    PREPARANDO = "Em preparação"
-    PRONTO = "Pronto"
-    FINALIZADO = "Finalizado"
+from src.domain.models.status_pedido import StatusPedido
+from src.domain.models.item_pedido import ItemPedido
 
 class Pedido:
-    def __init__(self, id, cliente_id, status=StatusPedido.RECEBIDO, data_criacao=None, itens=None):
+    def __init__(
+        self,
+        id: UUID,
+        cliente_id: Optional[UUID],
+        status: StatusPedido = StatusPedido.RECEBIDO,
+        data_criacao: Optional[datetime] = None,
+        itens: Optional[List[ItemPedido]] = None,
+    ):
         self.id = id
         self.cliente_id = cliente_id
         self.status = status
-        self.data_criacao = data_criacao or datetime.utcnow()
+        self.data_criacao = data_criacao or datetime.now(timezone.utc)
         self.itens = itens or []
 
-class ItemPedido:
-    def __init__(self, pedido_id, produto_id, quantidade):
-        self.pedido_id = pedido_id
-        self.produto_id = produto_id
-        self.quantidade = quantidade
-
-class FilaPedidos:
-    def __init__(self, id, status=StatusPedido.RECEBIDO, payload=None):
-        self.id = id
-        self.status = status
-        self.payload = payload

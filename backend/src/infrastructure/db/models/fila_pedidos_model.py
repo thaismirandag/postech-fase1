@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from src.infrastructure.db.session import Base
 
 class FilaPedidosModel(Base):
-    __tablename__ = "fila_pedidos"
+    __tablename__ = "tb_fila_pedidos"
     id = Column(
         UUID(as_uuid=True),
         primary_key=True,

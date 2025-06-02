@@ -73,3 +73,10 @@ class PedidoRepository(PedidoRepositoryPort):
             data_criacao=model.data_criacao,
             itens=itens,
         )
+    
+    def atualizar_status(self, pedido_id: UUID, status: str) -> None:
+        pedido_model = self.db.query(PedidoModel).filter_by(id=pedido_id).first()
+        if not pedido_model:
+            raise ValueError("Pedido não encontrado")
+        pedido_model.status = status
+        self.db.commit()

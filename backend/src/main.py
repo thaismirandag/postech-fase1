@@ -1,28 +1,36 @@
-import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 
-from src.adapters.input.api.cliente_controller import router as cliente_router
-from src.adapters.input.api.pagamento_controller import router as pagamento_router
-from src.adapters.input.api.pedido_controller import router as pedido_router
-from src.adapters.input.api.produto_controller import router as produto_router
+from src.adapters.input.api.public.pedido_controller import router as public_pedidos
+from src.adapters.input.api.public.produto_controller import router as public_produtos
+from src.adapters.input.api.public.pagamento_controller import router as public_pagamento
+
+from src.adapters.input.api.admin.pedido_controller import router as admin_pedidos
+from src.adapters.input.api.admin.cliente_controller import router as admin_clientes
+from src.adapters.input.api.admin.produto_controller import router as admin_produtos
+
 
 
 app = FastAPI(
-    title="Sistema de Autoatendimento de Fast Food",
-    description="API para sistema de autoatendimento de fast food",
-    version="1.0.0"
+    title="API Autoatendimento Fast Food",
+    version="1.0.0",
 )
 
-# Inclui os routers com prefixo e tags
-app.include_router(cliente_router)
-app.include_router(produto_router)
-app.include_router(pedido_router)
-app.include_router(pagamento_router)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.get("/")
-async def root():
-    return {"message": "Bem-vindo ao Sistema de Autoatendimento de Fast Food"}
+# Rotas públicas
+app.include_router(public_pedidos)
+app.include_router(public_produtos)
+app.include_router(public_pagamento)
 
+# Rotas administrativas 
+app.include_router(admin_pedidos)
+app.include_router(admin_clientes)
+app.include_router(admin_produtos)
 
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

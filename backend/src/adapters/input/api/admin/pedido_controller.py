@@ -1,0 +1,39 @@
+from fastapi import APIRouter, Depends
+from uuid import UUID
+from typing import List
+from src.adapters.input.api.dependencies import get_pedido_service, get_fila_repository, get_pedido_repository
+from src.adapters.input.dto.pedido_dto import PedidoResponse, AtualizarStatusPedidoDTO
+from src.ports.repositories.fila_pedidos_repository_port import FilaPedidosRepositoryPort
+from src.ports.repositories.pedido_repository_port import PedidoRepositoryPort
+from src.application.services.pedido_service import PedidoService
+
+router = APIRouter(prefix="/v1/api/admin/pedidos", tags=["Painel administrativo de Pedidos"])
+
+@router.get("/em-aberto", response_model=List[PedidoResponse], summary="Listar pedidos em aberto")
+def listar_pedidos_em_aberto(
+    fila_repo: FilaPedidosRepositoryPort = Depends(get_fila_repository),
+    pedido_repo: PedidoRepositoryPort = Depends(get_pedido_repository),
+):
+    fila = fila_repo.listar_em_aberto()
+    pedidos = []
+    for f in fila:
+        pedido = pedido_repo.buscar_por_id(f.id)
+        if pedido:
+            pedidos.append(pedido)
+    return pedidos
+
+@router.patch("/{pedido_id}/status", response_model=PedidoResponse, summary="Atualizar status do pedido")
+def atualizar_status_pedido(
+    pedido_id: UUID,
+    dto: AtualizarStatusPedidoDTO,
+    service: PedidoService = Depends(get_pedido_service),
+):
+    return service.atualizar_status_pedido(pedido_id, dto.status)
+
+@router.get("/", response_model=List[PedidoResponse], summary="Listar todos os pedidos")
+def listar_pedidos(service: PedidoService = Depends(get_pedido_service)):
+    return service.listar_pedidos()
+
+@router.delete("/{pedido_id}", status_code=204, summary="Deletar pedido")
+def deletar_pedido(pedido_id: UUID, service: PedidoService = Depends(get_pedido_service)):
+    service.deletar_pedido(pedido_id)

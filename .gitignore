@@ -34,13 +34,3 @@ docker-compose.override.yml
 
 # PlantUML/Diagramas
 *.svg
-
-
-# Outros
-.DS_Store
-Thumbs.db
-.idea/
-
-# Node/Frontend
-frontend/node_modules/
-frontend/dist/ 

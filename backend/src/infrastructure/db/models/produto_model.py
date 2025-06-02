@@ -7,7 +7,7 @@ from src.infrastructure.db.session import Base
 
 
 class ProdutoModel(Base):
-    __tablename__ = "produtos"
+    __tablename__ = "tb_produtos"
     id = Column(
         UUID(as_uuid=True),
         primary_key=True,

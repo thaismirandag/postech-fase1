@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from src.infrastructure.db.session import Base
 
 class CategoriaModel(Base):
-    __tablename__ = "categorias"
+    __tablename__ = "tb_categorias"
     id = Column(
         UUID(as_uuid=True),
         primary_key=True,
