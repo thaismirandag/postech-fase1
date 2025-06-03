@@ -11,8 +11,6 @@ Este projeto é um sistema de autoatendimento desenvolvido para uma lanchonete, 
 - [🔗 Endpoints Principais](#-endpoints-principais)
 - [👥 Desenvolvedores](#-desenvolvedores)
 - [📽️ Demo](https://youtu.be/2qGpN0MsCpQ)
-- [📄 Documentação](#-documentação)
-
 
 ---
 
