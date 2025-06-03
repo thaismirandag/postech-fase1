@@ -4,10 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.adapters.input.api.public.pedido_controller import router as public_pedidos
 from src.adapters.input.api.public.produto_controller import router as public_produtos
 from src.adapters.input.api.public.pagamento_controller import router as public_pagamento
-
+from src.adapters.input.api.public.cliente_controller import router as public_cliente
 from src.adapters.input.api.admin.pedido_controller import router as admin_pedidos
 from src.adapters.input.api.admin.cliente_controller import router as admin_clientes
 from src.adapters.input.api.admin.produto_controller import router as admin_produtos
+
 
 
 
@@ -28,6 +29,7 @@ app.add_middleware(
 app.include_router(public_pedidos)
 app.include_router(public_produtos)
 app.include_router(public_pagamento)
+app.include_router(public_cliente)
 
 # Rotas administrativas 
 app.include_router(admin_pedidos)

@@ -13,16 +13,12 @@ services:
       - ./backend/.env
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/tech_challenge
 
   db:
     image: postgres:15
     restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: tech_challenge
+    env_file:
+      - ./backend/.env
     ports:
       - "5432:5432"
     volumes:

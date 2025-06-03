@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
-
 from src.adapters.input.dto.cliente_dto import ClienteCreate, ClienteResponse
 
-
 class ClienteServicePort(ABC):
+
     @abstractmethod
-    def criar_cliente(self, cliente_create: ClienteCreate) -> ClienteResponse:
+    def criar_ou_obter_cliente(self, cliente_create: ClienteCreate) -> ClienteResponse:
         pass
 
     @abstractmethod

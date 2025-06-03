@@ -1,13 +1,14 @@
 from uuid import UUID
+from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 
 
 class ClienteBase(BaseModel):
-    nome: str
-    cpf: str
-    email: EmailStr
-    telefone: str | None = None
+    nome: Optional[str] = None
+    email: Optional[EmailStr] = None
+    cpf: Optional[str] = None  
+    telefone: Optional[str] = None
 
 class ClienteCreate(ClienteBase):
     pass

@@ -8,8 +8,8 @@ router = APIRouter(prefix="/v1/api/admin/produtos", tags=["Painel administrativo
 
 @router.post("/", response_model=ProdutoResponse, summary="Criar novo produto")
 def criar_produto(dto: ProdutoCreate, service: ProdutoServicePort = Depends(get_produto_service)):
-    return service.criar(dto)
+    return service.criar_produto(dto)
 
 @router.delete("/{produto_id}", status_code=204, summary="Remover produto")
 def deletar_produto(produto_id: UUID, service: ProdutoServicePort = Depends(get_produto_service)):
-    service.deletar(produto_id)
+    service.deletar_produto(produto_id)
