@@ -26,7 +26,7 @@ class ClienteService(ClienteServicePort):
             id=uuid4(),
             nome=cliente_create.nome,
             cpf=cliente_create.cpf,
-            email=cliente_create.email
+            email=cliente_create.email,
         )
         self.cliente_repository.salvar(cliente)
         return ClienteResponse(**cliente.__dict__)
@@ -37,3 +37,6 @@ class ClienteService(ClienteServicePort):
             return ClienteResponse(**cliente.__dict__)
         return None
 
+    def listar_clientes(self) -> list[ClienteResponse]:
+        clientes = self.cliente_repository.listar()
+        return [ClienteResponse(**c.__dict__) for c in clientes]

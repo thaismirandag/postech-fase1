@@ -10,6 +10,8 @@ from src.adapters.input.api.public.pagamento_controller import (
 )
 from src.adapters.input.api.public.pedido_controller import router as public_pedidos
 from src.adapters.input.api.public.produto_controller import router as public_produtos
+from src.adapters.input.api.public.auth_controller import router as public_login
+
 
 app = FastAPI(
     title="API Autoatendimento Fast Food",
@@ -25,10 +27,12 @@ app.add_middleware(
 )
 
 # Rotas públicas
-app.include_router(public_pedidos)
-app.include_router(public_produtos)
-app.include_router(public_pagamento)
+app.include_router(public_login)
 app.include_router(public_cliente)
+app.include_router(public_produtos)
+app.include_router(public_pedidos)
+app.include_router(public_pagamento)
+
 
 # Rotas administrativas
 app.include_router(admin_pedidos)

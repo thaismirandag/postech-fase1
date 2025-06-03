@@ -86,22 +86,25 @@ docker-compose exec app poetry run ruff check src/ --fix
 ## 🔗 Endpoints principais
 
 ### 👤 Clientes
-- `POST /v1/api/public/clientes/` – Criar cliente (identificado ou anônimo)
-- GET /v1/api/admin/clientes/{cpf}
-- `GET /v1/api/admin/clientes/{cpf}` – Buscar cliente por CPF
+- `POST /v1/api/public/clientes/` – Criar ou obter cliente (identificado ou anônimo)
+- `GET /v1/api/admin/clientes/` – Listar todos os clientes (admin)
+- `GET /v1/api/admin/clientes/{cpf}` – Buscar cliente por cpf (admin)
 
 ### 🍔 Produtos
+- `GET /v1/api/public/produtos/` – Listar produtos disponíveis
 - `POST /v1/api/admin/produtos/` – Criar produto (admin)
-- `GET /v1/api/public/produtos/categoria/{categoria}` – Buscar produtos por categoria
+- `DELETE /v1/api/admin/produtos/{produto_id}` – Remover produto (admin)
 
-### 🛂 Pedidos
-- `POST /v1/api/public/pedidos/` – Criar pedido (checkout)
+### 🧾 Pedidos
+- `POST /v1/api/public/pedidos/` – Cliente cria um pedido (checkout)
+- `GET /v1/api/public/pedidos/{pedido_id}` – Cliente acompanha status do pedido
 - `GET /v1/api/admin/pedidos/` – Listar todos os pedidos (admin)
-- `PATCH /v1/api/admin/pedidos/{id}/status` – Atualizar status do pedido (admin)
-- `GET /v1/api/public/pedidos/{id}` – Acompanhar pedido (cliente)
+- `GET /v1/api/admin/pedidos/em-aberto` – Listar pedidos em aberto (admin)
+- `PATCH /v1/api/admin/pedidos/{pedido_id}/status` – Atualizar status do pedido (admin)
+- `DELETE /v1/api/admin/pedidos/{pedido_id}` – Deletar pedido (admin)
 
 ### 💳 Pagamento
-- `POST /v1/api/public/pagamentos/gerar-qrcode` – Simular pagamento via QR Code
+- `GET /v1/api/public/pagamento/qrcode` – Exibir QRCode do Mercado Pago
 
 ---
 

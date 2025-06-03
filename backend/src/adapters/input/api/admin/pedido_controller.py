@@ -13,8 +13,9 @@ from src.ports.repositories.fila_pedidos_repository_port import (
     FilaPedidosRepositoryPort,
 )
 from src.ports.repositories.pedido_repository_port import PedidoRepositoryPort
+from src.adapters.input.api.security.jwt_handler import get_current_admin 
 
-router = APIRouter(prefix="/v1/api/admin/pedidos", tags=["Painel administrativo de Pedidos"])
+router = APIRouter(prefix="/v1/api/admin/pedidos", tags=["Painel administrativo de Pedidos"], dependencies=[Depends(get_current_admin)])
 
 @router.get("/em-aberto", response_model=list[PedidoResponse], summary="Listar pedidos em aberto")
 def listar_pedidos_em_aberto(

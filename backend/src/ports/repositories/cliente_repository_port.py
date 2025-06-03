@@ -15,3 +15,8 @@ class ClienteRepositoryPort(ABC):
     @abstractmethod
     def salvar(self, cliente: Cliente) -> Cliente:
         pass
+
+    @abstractmethod
+    def listar(self) -> list[Cliente]:
+        pass
+
