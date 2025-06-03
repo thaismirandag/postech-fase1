@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
+
+from src.adapters.input.api.dependencies import get_cliente_service
 from src.adapters.input.dto.cliente_dto import ClienteCreate, ClienteResponse
 from src.ports.services.cliente_service_port import ClienteServicePort
-from src.adapters.input.api.dependencies import get_cliente_service
 
 router = APIRouter(
     prefix="/v1/api/public/clientes",

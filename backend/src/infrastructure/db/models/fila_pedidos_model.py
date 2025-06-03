@@ -1,7 +1,10 @@
 import uuid
+
 from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID
+
 from src.infrastructure.db.session import Base
+
 
 class FilaPedidosModel(Base):
     __tablename__ = "tb_fila_pedidos"

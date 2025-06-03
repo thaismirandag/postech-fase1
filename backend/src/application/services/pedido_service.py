@@ -1,12 +1,17 @@
 from uuid import UUID
+
+from fastapi import HTTPException
+
 from src.adapters.input.dto.pedido_dto import (
     ItemPedidoDTO,
     PedidoCreate,
     PedidoResponse,
 )
 from src.domain.models.pedido import ItemPedido, Pedido, StatusPedido
+from src.ports.repositories.fila_pedidos_repository_port import (
+    FilaPedidosRepositoryPort,
+)
 from src.ports.repositories.pedido_repository_port import PedidoRepositoryPort
-from src.ports.repositories.fila_pedidos_repository_port import FilaPedidosRepositoryPort
 from src.ports.services.pedido_service_port import PedidoServicePort
 
 
@@ -27,15 +32,15 @@ class PedidoService(PedidoServicePort):
 
         pedido = Pedido.criar(cliente_id=pedido_create.cliente_id, itens=itens)
         pedido = self.repository.salvar(pedido)
-        self.fila_repository.enfileirar(pedido.id)  # integração com fila
+        self.fila_repository.enfileirar(pedido.id)
 
         return self._to_response(pedido)
 
-    def buscar_pedido_por_id(self, pedido_id: UUID) -> PedidoResponse | None:
+    def buscar_pedido_por_id(self, pedido_id: UUID) -> PedidoResponse:
         pedido = self.repository.buscar_por_id(pedido_id)
-        if pedido:
-            return self._to_response(pedido)
-        return None
+        if not pedido:
+            raise HTTPException(status_code=404, detail="Pedido não encontrado")
+        return self._to_response(pedido)
 
     def listar_pedidos(self) -> list[PedidoResponse]:
         pedidos = self.repository.listar()
@@ -52,7 +57,6 @@ class PedidoService(PedidoServicePort):
         pedido = self.repository.buscar_por_id(pedido_id)
         if not pedido:
             raise ValueError("Pedido não encontrado")
-
         pedido.status = novo_status
         pedido = self.repository.salvar(pedido)
         return self._to_response(pedido)

@@ -1,15 +1,22 @@
-from fastapi import APIRouter, Depends
 from uuid import UUID
-from typing import List
-from src.adapters.input.api.dependencies import get_pedido_service, get_fila_repository, get_pedido_repository
-from src.adapters.input.dto.pedido_dto import PedidoResponse, AtualizarStatusPedidoDTO
-from src.ports.repositories.fila_pedidos_repository_port import FilaPedidosRepositoryPort
-from src.ports.repositories.pedido_repository_port import PedidoRepositoryPort
+
+from fastapi import APIRouter, Depends
+
+from src.adapters.input.api.dependencies import (
+    get_fila_repository,
+    get_pedido_repository,
+    get_pedido_service,
+)
+from src.adapters.input.dto.pedido_dto import AtualizarStatusPedidoDTO, PedidoResponse
 from src.application.services.pedido_service import PedidoService
+from src.ports.repositories.fila_pedidos_repository_port import (
+    FilaPedidosRepositoryPort,
+)
+from src.ports.repositories.pedido_repository_port import PedidoRepositoryPort
 
 router = APIRouter(prefix="/v1/api/admin/pedidos", tags=["Painel administrativo de Pedidos"])
 
-@router.get("/em-aberto", response_model=List[PedidoResponse], summary="Listar pedidos em aberto")
+@router.get("/em-aberto", response_model=list[PedidoResponse], summary="Listar pedidos em aberto")
 def listar_pedidos_em_aberto(
     fila_repo: FilaPedidosRepositoryPort = Depends(get_fila_repository),
     pedido_repo: PedidoRepositoryPort = Depends(get_pedido_repository),
@@ -30,7 +37,7 @@ def atualizar_status_pedido(
 ):
     return service.atualizar_status_pedido(pedido_id, dto.status)
 
-@router.get("/", response_model=List[PedidoResponse], summary="Listar todos os pedidos")
+@router.get("/", response_model=list[PedidoResponse], summary="Listar todos os pedidos")
 def listar_pedidos(service: PedidoService = Depends(get_pedido_service)):
     return service.listar_pedidos()
 

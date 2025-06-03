@@ -23,6 +23,5 @@ class PedidoResponse(BaseModel):
     data_criacao: datetime
     itens: list[ItemPedidoDTO]
 
-
 class AtualizarStatusPedidoDTO(BaseModel):
     status: StatusPedido

@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends
 from uuid import UUID
+
+from fastapi import APIRouter, Depends
+
+from src.adapters.input.api.dependencies import get_pedido_service
 from src.adapters.input.dto.pedido_dto import PedidoCreate, PedidoResponse
 from src.application.services.pedido_service import PedidoService
-from src.adapters.input.api.dependencies import get_pedido_service
 
 router = APIRouter(prefix="/v1/api/public/pedidos", tags=["Painel de Pedidos"])
 

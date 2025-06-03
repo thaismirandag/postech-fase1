@@ -1,7 +1,9 @@
 from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+
 from src.infrastructure.db.session import Base
+
 
 class ItemPedidoModel(Base):
     __tablename__ = "tb_itens_pedido"

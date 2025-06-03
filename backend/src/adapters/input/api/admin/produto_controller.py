@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends
 from uuid import UUID
+
+from fastapi import APIRouter, Depends
+
 from src.adapters.input.api.dependencies import get_produto_service
 from src.adapters.input.dto.produto_dto import ProdutoCreate, ProdutoResponse
 from src.ports.services.produto_service_port import ProdutoServicePort

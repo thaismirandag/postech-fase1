@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
+
 from src.domain.models.fila_pedidos import FilaPedidos
+
 
 class FilaPedidosRepositoryPort(ABC):
     @abstractmethod

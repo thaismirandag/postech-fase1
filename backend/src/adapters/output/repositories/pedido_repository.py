@@ -3,8 +3,8 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 
 from src.domain.models.pedido import ItemPedido, Pedido
-from src.infrastructure.db.models.pedido_model import PedidoModel
 from src.infrastructure.db.models.item_pedido_model import ItemPedidoModel
+from src.infrastructure.db.models.pedido_model import PedidoModel
 from src.ports.repositories.pedido_repository_port import PedidoRepositoryPort
 
 
@@ -73,7 +73,7 @@ class PedidoRepository(PedidoRepositoryPort):
             data_criacao=model.data_criacao,
             itens=itens,
         )
-    
+
     def atualizar_status(self, pedido_id: UUID, status: str) -> None:
         pedido_model = self.db.query(PedidoModel).filter_by(id=pedido_id).first()
         if not pedido_model:

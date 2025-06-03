@@ -1,7 +1,7 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -19,7 +19,7 @@ class PagamentoModel(Base):
     )
     pedido_id = Column(UUID(as_uuid=True), ForeignKey("tb_pedidos.id"), nullable=False)
     status = Column(String, default="pendente", nullable=False)
-    data_criacao = Column(DateTime, default=datetime.now(timezone.utc))
+    data_criacao = Column(DateTime, default=datetime.now(UTC))
     data_confirmacao = Column(DateTime, nullable=True)
     pedido = relationship("PedidoModel", back_populates="pagamento")
 

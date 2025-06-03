@@ -2,22 +2,23 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from src.adapters.output.repositories.cliente_repository import ClienteRepository
+from src.adapters.output.repositories.fila_pedidos_repository import (
+    FilaPedidosRepository,
+)
 from src.adapters.output.repositories.pedido_repository import PedidoRepository
 from src.adapters.output.repositories.produto_repository import ProdutoRepository
-from src.adapters.output.repositories.fila_pedidos_repository import FilaPedidosRepository
-
 from src.application.services.cliente_service import ClienteService
 from src.application.services.pagamento_service import PagamentoService
 from src.application.services.pedido_service import PedidoService
 from src.application.services.produto_service import ProdutoService
-
 from src.infrastructure.db.session import get_db
-
+from src.ports.repositories.fila_pedidos_repository_port import (
+    FilaPedidosRepositoryPort,
+)
+from src.ports.repositories.pedido_repository_port import PedidoRepositoryPort
 from src.ports.services.cliente_service_port import ClienteServicePort
 from src.ports.services.pagamento_service_port import PagamentoServicePort
 from src.ports.services.produto_service_port import ProdutoServicePort
-from src.ports.repositories.fila_pedidos_repository_port import FilaPedidosRepositoryPort
-from src.ports.repositories.pedido_repository_port import PedidoRepositoryPort
 
 
 def get_db_session() -> Session:

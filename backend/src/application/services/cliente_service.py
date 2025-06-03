@@ -1,5 +1,4 @@
 from uuid import uuid4
-from typing import Optional
 
 from src.adapters.input.dto.cliente_dto import ClienteCreate, ClienteResponse
 from src.domain.models.cliente import Cliente
