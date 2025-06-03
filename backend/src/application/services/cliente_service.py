@@ -27,8 +27,7 @@ class ClienteService(ClienteServicePort):
             id=uuid4(),
             nome=cliente_create.nome,
             cpf=cliente_create.cpf,
-            email=cliente_create.email,
-            telefone=cliente_create.telefone,
+            email=cliente_create.email
         )
         self.cliente_repository.salvar(cliente)
         return ClienteResponse(**cliente.__dict__)

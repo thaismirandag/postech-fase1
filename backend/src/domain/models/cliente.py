@@ -8,4 +8,3 @@ class Cliente:
     nome: str
     cpf: str
     email: str
-    telefone: str | None = None

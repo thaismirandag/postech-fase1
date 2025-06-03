@@ -15,7 +15,7 @@ class ClienteModel(Base):
         unique=True,
         nullable=False,
     )
-    nome = Column(String, nullable=False)
-    cpf = Column(String, unique=True, nullable=False)
-    email = Column(String, unique=True, nullable=False)
-    telefone = Column(String, nullable=True)
+    nome = Column(String, nullable=True)
+    cpf = Column(String, unique=True, nullable=True)
+    email = Column(String, unique=True, nullable=True)
+
