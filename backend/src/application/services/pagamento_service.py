@@ -4,7 +4,6 @@ from src.adapters.input.dto.pagamento_dto import PagamentoQRCodeResponse
 from src.domain.models.pedido import StatusPedido
 from src.ports.services.pagamento_service_port import PagamentoServicePort
 
-
 class PagamentoService(PagamentoServicePort):
     def gerar_qrcode(self) -> PagamentoQRCodeResponse:
         qrcode_id = str(uuid4())
