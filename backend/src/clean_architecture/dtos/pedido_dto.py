@@ -1,0 +1,26 @@
+from datetime import datetime
+from uuid import UUID
+
+from pydantic import BaseModel
+
+from src.clean_architecture.enums.status_pedido import StatusPedido
+
+class ItemPedidoDTO(BaseModel):
+    produto_id: UUID
+    quantidade: int
+
+
+class PedidoCreate(BaseModel):
+    cliente_id: UUID
+    itens: list[ItemPedidoDTO]
+
+
+class PedidoResponse(BaseModel):
+    id: UUID
+    cliente_id: UUID
+    status: StatusPedido
+    data_criacao: datetime
+    itens: list[ItemPedidoDTO]
+
+class AtualizarStatusPedidoDTO(BaseModel):
+    status: StatusPedido
