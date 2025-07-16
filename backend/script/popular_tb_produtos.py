@@ -34,8 +34,5 @@ def popular_produtos():
     finally:
         session.close()
 
-print("Teste")
 if __name__ == "__main__":
-    print("Iniciando a inserção de produtos...")
     popular_produtos()
-    print("Inserção de produtos concluída.")

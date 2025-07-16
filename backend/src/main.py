@@ -39,7 +39,3 @@ app.include_router(public_pagamento)
 app.include_router(admin_pedidos)
 app.include_router(admin_clientes)
 app.include_router(admin_produtos)
-
-
-popular_produtos()
-print("Produtos populares inseridos com sucesso.")
