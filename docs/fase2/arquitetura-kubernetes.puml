@@ -1,0 +1,211 @@
+@startuml Arquitetura Kubernetes - Fase 2
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+
+title Arquitetura Kubernetes - Sistema de Autoatendimento Fast Food - Fase 2
+
+' Definição de cores
+skinparam rectangle {
+    BackgroundColor<<Ingress>> #FF6B6B
+    BackgroundColor<<Service>> #4ECDC4
+    BackgroundColor<<Deployment>> #45B7D1
+    BackgroundColor<<Database>> #96CEB4
+    BackgroundColor<<HPA>> #FFEAA7
+    BackgroundColor<<ConfigMap>> #FD79A8
+    BackgroundColor<<Secret>> #D63031
+    BackgroundColor<<External>> #74B9FF
+}
+
+' Namespace
+package "Namespace: fastfood" {
+    
+    ' Ingress
+    rectangle "Ingress Controller" as Ingress <<Ingress>>
+    note right of Ingress
+        Nginx Ingress
+        SSL/TLS Termination
+        Load Balancing
+        Path-based routing
+    end note
+    
+    ' Services
+    rectangle "fastfood-service" as Service <<Service>>
+    note right of Service
+        Type: ClusterIP
+        Port: 8000
+        Target Port: 8000
+        Load Balancer
+    end note
+    
+    ' Deployments
+    rectangle "fastfood-deployment" as Deployment <<Deployment>>
+    note right of Deployment
+        Replicas: 3
+        Image: fastfood-api:latest
+        Resources:
+        - CPU: 500m
+        - Memory: 512Mi
+        Health Checks:
+        - Liveness Probe
+        - Readiness Probe
+    end note
+    
+    ' HPA
+    rectangle "fastfood-hpa" as HPA <<HPA>>
+    note right of HPA
+        Min Replicas: 2
+        Max Replicas: 10
+        Target CPU: 70%
+        Target Memory: 80%
+        Scale Up: 30s
+        Scale Down: 300s
+    end note
+    
+    ' ConfigMaps
+    rectangle "app-config" as ConfigMap <<ConfigMap>>
+    note right of ConfigMap
+        Environment Variables:
+        - DB_HOST
+        - DB_PORT
+        - DB_NAME
+        - LOG_LEVEL
+        - API_VERSION
+    end note
+    
+    ' Secrets
+    rectangle "db-secret" as Secret <<Secret>>
+    note right of Secret
+        Database Credentials:
+        - DB_USER
+        - DB_PASSWORD
+        - JWT_SECRET
+        Base64 Encoded
+    end note
+    
+    ' Persistent Volume
+    rectangle "postgres-pv" as PV <<Database>>
+    note right of PV
+        Storage: 10Gi
+        Access Mode: ReadWriteOnce
+        Storage Class: standard
+    end note
+    
+    rectangle "postgres-pvc" as PVC <<Database>>
+    note right of PVC
+        Persistent Volume Claim
+        Bound to postgres-pv
+    end note
+    
+    ' Database Deployment
+    rectangle "postgres-deployment" as DBDeployment <<Database>>
+    note right of DBDeployment
+        PostgreSQL 13
+        Replicas: 1
+        Resources:
+        - CPU: 1000m
+        - Memory: 1Gi
+        Volume: postgres-pvc
+    end note
+    
+    rectangle "postgres-service" as DBService <<Service>>
+    note right of DBService
+        Type: ClusterIP
+        Port: 5432
+        Internal DB Access
+    end note
+}
+
+' External Services
+cloud "Mercado Pago API" as MercadoPago <<External>>
+note right of MercadoPago
+    External Payment Gateway
+    Webhook Endpoint
+    QR Code Generation
+    Payment Status
+end note
+
+cloud "Load Balancer" as LoadBalancer <<External>>
+note right of LoadBalancer
+    Cloud Load Balancer
+    SSL Termination
+    Health Checks
+    Auto Scaling
+end note
+
+' Relacionamentos
+LoadBalancer --> Ingress
+Ingress --> Service
+Service --> Deployment
+HPA --> Deployment
+Deployment --> ConfigMap
+Deployment --> Secret
+Deployment --> DBService
+DBService --> DBDeployment
+DBDeployment --> PVC
+PVC --> PV
+Deployment --> MercadoPago
+
+' Fluxo de Dados
+note top of LoadBalancer
+    Cliente acessa:
+    https://fastfood-api.com
+end note
+
+note top of Ingress
+    Roteamento:
+    /api/* -> fastfood-service
+    /health -> health check
+    /docs -> Swagger UI
+end note
+
+note top of Service
+    Load Balancing:
+    Round Robin
+    Health Check
+    Circuit Breaker
+end note
+
+note top of Deployment
+    Pods:
+    - fastfood-pod-1
+    - fastfood-pod-2
+    - fastfood-pod-3
+    Auto Scaling
+end note
+
+note top of HPA
+    Monitoramento:
+    - CPU Usage
+    - Memory Usage
+    - Custom Metrics
+    Auto Scaling Rules
+end note
+
+note top of DBDeployment
+    Database:
+    - PostgreSQL 13
+    - Connection Pooling
+    - Backup Strategy
+    - High Availability
+end note
+
+' Security
+note bottom of Secret
+    Security:
+    - RBAC Enabled
+    - Network Policies
+    - Pod Security Policies
+    - Secrets Management
+end note
+
+note bottom of ConfigMap
+    Configuration:
+    - Environment-based
+    - Feature Flags
+    - Logging Levels
+    - API Settings
+end note
+
+@enduml 

@@ -12,12 +12,15 @@ from src.clean_architecture.gateways.produto import ProdutoGateway
 class ProdutoController:
     def criar_produto(dto: ProdutoCreate, db: Session):
         produto_gateway = ProdutoGateway(db)
-        return CriarProdutoUseCase.execute(dto, produto_gateway)
+        use_case = CriarProdutoUseCase()
+        return use_case.execute(dto, produto_gateway)
     
     def listar_produtos(db: Session):
         produto_gateway = ProdutoGateway(db)
-        return ListarProdutoUseCase.execute(produto_gateway)
+        use_case = ListarProdutoUseCase()
+        return use_case.execute(produto_gateway)
     
     def deletar_produto(produto_id: UUID, db: Session):
         produto_gateway = ProdutoGateway(db)
-        return DeletarProdutoUseCase.execute(produto_id, produto_gateway)
+        use_case = DeletarProdutoUseCase()
+        return use_case.execute(produto_id, produto_gateway)

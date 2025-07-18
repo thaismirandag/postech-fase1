@@ -1,0 +1,79 @@
+@startuml Event Storming - Fase 1
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+
+title Event Storming - Sistema de Autoatendimento Fast Food - Fase 1
+
+' Definição de cores
+skinparam rectangle {
+    BackgroundColor<<Command>> #FF6B6B
+    BackgroundColor<<Event>> #4ECDC4
+    BackgroundColor<<Policy>> #45B7D1
+    BackgroundColor<<Actor>> #96CEB4
+    BackgroundColor<<System>> #FFEAA7
+    BackgroundColor<<Error>> #D63031
+    BackgroundColor<<Alternative>> #FD79A8
+}
+
+' Atores
+rectangle "Cliente" as Cliente <<Actor>>
+rectangle "Atendente" as Atendente <<Actor>>
+
+' Comandos (Ações que podem ser executadas)
+rectangle "Cliente chega no totem" as CMD_CHEGA <<Command>>
+rectangle "Cliente escolhe produtos" as CMD_ESCOLHE <<Command>>
+rectangle "Cliente finaliza pedido" as CMD_FINALIZA <<Command>>
+rectangle "Cliente paga" as CMD_PAGA <<Command>>
+rectangle "Atendente vê pedido" as CMD_VE_PEDIDO <<Command>>
+rectangle "Atendente entrega pedido" as CMD_ENTREGA <<Command>>
+
+' Eventos (O que acontece no sistema)
+rectangle "Totem ligado" as EVT_TOTEM_LIGADO <<Event>>
+rectangle "Produtos mostrados" as EVT_PRODUTOS_MOSTRADOS <<Event>>
+rectangle "Pedido feito" as EVT_PEDIDO_FEITO <<Event>>
+rectangle "Pagamento aceito" as EVT_PAGAMENTO_ACEITO <<Event>>
+rectangle "Pedido na cozinha" as EVT_PEDIDO_COZINHA <<Event>>
+rectangle "Pedido pronto" as EVT_PEDIDO_PRONTO <<Event>>
+rectangle "Pedido entregue" as EVT_PEDIDO_ENTREGUE <<Event>>
+
+' Policies (Regras de negócio básicas)
+rectangle "Produto tem que existir" as POL_PRODUTO_EXISTE <<Policy>>
+rectangle "Cliente tem que pagar" as POL_CLIENTE_PAGA <<Policy>>
+
+' Fluxos Alternativos (Cenários de erro básicos)
+rectangle "Produto acabou" as ALT_PRODUTO_ACABOU <<Alternative>>
+rectangle "Pagamento falhou" as ALT_PAGAMENTO_FALHOU <<Alternative>>
+
+' Sistemas Externos
+rectangle "Mercado Pago" as SYS_MERCADO_PAGO <<System>>
+rectangle "Banco de dados" as SYS_DB <<System>>
+
+' Fluxo Principal
+Cliente --> CMD_CHEGA
+CMD_CHEGA --> EVT_TOTEM_LIGADO
+EVT_TOTEM_LIGADO --> EVT_PRODUTOS_MOSTRADOS
+EVT_PRODUTOS_MOSTRADOS --> CMD_ESCOLHE
+CMD_ESCOLHE --> POL_PRODUTO_EXISTE
+POL_PRODUTO_EXISTE --> EVT_PEDIDO_FEITO
+EVT_PEDIDO_FEITO --> CMD_FINALIZA
+CMD_FINALIZA --> CMD_PAGA
+CMD_PAGA --> POL_CLIENTE_PAGA
+POL_CLIENTE_PAGA --> SYS_MERCADO_PAGO
+SYS_MERCADO_PAGO --> EVT_PAGAMENTO_ACEITO
+EVT_PAGAMENTO_ACEITO --> EVT_PEDIDO_COZINHA
+EVT_PEDIDO_COZINHA --> CMD_VE_PEDIDO
+CMD_VE_PEDIDO --> EVT_PEDIDO_PRONTO
+EVT_PEDIDO_PRONTO --> CMD_ENTREGA
+CMD_ENTREGA --> EVT_PEDIDO_ENTREGUE
+
+' Fluxos Alternativos
+ALT_PRODUTO_ACABOU --> EVT_PEDIDO_FEITO
+ALT_PAGAMENTO_FALHOU --> EVT_PEDIDO_FEITO
+
+' Persistência
+EVT_PEDIDO_FEITO --> SYS_DB
+EVT_PAGAMENTO_ACEITO --> SYS_DB
+
+@enduml 

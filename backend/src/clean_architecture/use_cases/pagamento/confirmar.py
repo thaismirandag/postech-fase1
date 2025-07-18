@@ -4,7 +4,7 @@ from src.clean_architecture.dtos.pedido_dto import PedidoResponse
 from src.clean_architecture.enums.status_pedido import StatusPedido
 from src.clean_architecture.interfaces.gateways.pedido import PedidoGatewayInterface
 
-class GerarQRCodePagamentoUseCase:
+class ConfirmarPagamentoUseCase:
     def __init__(self, pedido_gateway: PedidoGatewayInterface):
         self._pedido_gateway = pedido_gateway
     

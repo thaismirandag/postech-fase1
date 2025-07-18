@@ -16,7 +16,8 @@ class CriarOuObterClienteUseCase:
             if len(cliente_create.cpf.replace('.', '').replace('-', '')) != 11:
                 raise ValueError("CPF deve ter 11 dígitos")
             
-            cliente = BuscarClientePorCPFUseCase.execute(cliente_create.cpf, cliente_gateway)
+            use_case = BuscarClientePorCPFUseCase()
+            cliente = use_case.execute(cliente_create.cpf, cliente_gateway)
             if cliente:
                 return ClienteResponse(**cliente.__dict__)
         
@@ -25,7 +26,8 @@ class CriarOuObterClienteUseCase:
             if '@' not in cliente_create.email or '.' not in cliente_create.email:
                 raise ValueError("Email deve ter formato válido")
             
-            cliente = BuscarClientePorEmailUseCase.execute(cliente_create.email, cliente_gateway)
+            use_case = BuscarClientePorEmailUseCase()
+            cliente = use_case.execute(cliente_create.email, cliente_gateway)
             if cliente:
                 return ClienteResponse(**cliente.__dict__)
         

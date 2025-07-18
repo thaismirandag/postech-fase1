@@ -17,124 +17,89 @@ skinparam rectangle {
     BackgroundColor<<Alternative>> #FD79A8
 }
 
-' Ator Principal
+' Atores
 rectangle "Cliente" as Cliente <<Actor>>
+rectangle "Gerente" as Gerente <<Actor>>
+rectangle "Cozinha" as Cozinha <<Actor>>
 
 ' Comandos (Ações que podem ser executadas)
-rectangle "Cliente acessa sistema" as CMD_ACESSO <<Command>>
-rectangle "Cliente visualiza cardápio" as CMD_VISUALIZA <<Command>>
-rectangle "Cliente seleciona produtos" as CMD_SELECIONA <<Command>>
-rectangle "Cliente adiciona ao carrinho" as CMD_ADICIONA <<Command>>
-rectangle "Cliente remove do carrinho" as CMD_REMOVE <<Command>>
-rectangle "Cliente finaliza pedido" as CMD_FINALIZA <<Command>>
-rectangle "Cliente informa dados" as CMD_INFORMA <<Command>>
-rectangle "Cliente confirma pagamento" as CMD_CONFIRMA <<Command>>
-rectangle "Cliente cancela pedido" as CMD_CANCELA <<Command>>
-rectangle "Cliente solicita status" as CMD_STATUS <<Command>>
+rectangle "Cliente faz checkout" as CMD_CHECKOUT <<Command>>
+rectangle "Cliente consulta status" as CMD_CONSULTA <<Command>>
+rectangle "Gerente atualiza status" as CMD_ATUALIZA <<Command>>
+rectangle "Gerente gerencia produtos" as CMD_GERENCIA <<Command>>
+rectangle "Cozinha prepara pedido" as CMD_PREPARA <<Command>>
+rectangle "Sistema recebe webhook" as CMD_WEBHOOK <<Command>>
 
 ' Eventos (O que acontece no sistema)
-rectangle "Sistema carregado" as EVT_SISTEMA_CARREGADO <<Event>>
-rectangle "Cardápio exibido" as EVT_CARDAPIO_EXIBIDO <<Event>>
-rectangle "Produto selecionado" as EVT_PRODUTO_SELECIONADO <<Event>>
-rectangle "Item adicionado ao carrinho" as EVT_ITEM_ADICIONADO <<Event>>
-rectangle "Item removido do carrinho" as EVT_ITEM_REMOVIDO <<Event>>
-rectangle "Carrinho atualizado" as EVT_CARRINHO_ATUALIZADO <<Event>>
-rectangle "Pedido criado" as EVT_PEDIDO_CRIADO <<Event>>
-rectangle "Cliente identificado" as EVT_CLIENTE_IDENTIFICADO <<Event>>
-rectangle "Pagamento iniciado" as EVT_PAGAMENTO_INICIADO <<Event>>
-rectangle "QR Code gerado" as EVT_QRCODE_GERADO <<Event>>
-rectangle "Pagamento confirmado" as EVT_PAGAMENTO_CONFIRMADO <<Event>>
-rectangle "Pedido pago" as EVT_PEDIDO_PAGO <<Event>>
-rectangle "Pedido enviado para cozinha" as EVT_PEDIDO_COZINHA <<Event>>
-rectangle "Pedido em preparação" as EVT_PEDIDO_PREPARANDO <<Event>>
-rectangle "Pedido pronto" as EVT_PEDIDO_PRONTO <<Event>>
-rectangle "Pedido entregue" as EVT_PEDIDO_ENTREGUE <<Event>>
-rectangle "Pedido cancelado" as EVT_PEDIDO_CANCELADO <<Event>>
-rectangle "Status consultado" as EVT_STATUS_CONSULTADO <<Event>>
+rectangle "Pedido identificado" as EVT_PEDIDO_IDENTIFICADO <<Event>>
+rectangle "Pagamento processado" as EVT_PAGAMENTO_PROCESSADO <<Event>>
+rectangle "Status atualizado" as EVT_STATUS_ATUALIZADO <<Event>>
+rectangle "Pedido em preparo" as EVT_PEDIDO_PREPARO <<Event>>
+rectangle "Pedido finalizado" as EVT_PEDIDO_FINALIZADO <<Event>>
+rectangle "Produto alterado" as EVT_PRODUTO_ALTERADO <<Event>>
+rectangle "Webhook recebido" as EVT_WEBHOOK_RECEBIDO <<Event>>
 
 ' Policies (Regras de negócio)
-rectangle "Validar estoque disponível" as POL_ESTOQUE <<Policy>>
-rectangle "Validar limite de itens" as POL_LIMITE_ITENS <<Policy>>
-rectangle "Validar dados do cliente" as POL_DADOS_CLIENTE <<Policy>>
-rectangle "Validar valor mínimo" as POL_VALOR_MINIMO <<Policy>>
-rectangle "Validar tempo de pagamento" as POL_TEMPO_PAGAMENTO <<Policy>>
-rectangle "Validar transições de status" as POL_TRANSICOES <<Policy>>
-rectangle "Validar CPF" as POL_CPF <<Policy>>
-rectangle "Validar email" as POL_EMAIL <<Policy>>
-rectangle "Validar quantidade máxima" as POL_QUANTIDADE <<Policy>>
-rectangle "Validar preço do produto" as POL_PRECO <<Policy>>
+rectangle "Valor mínimo R$ 5" as POL_VALOR_MINIMO <<Policy>>
+rectangle "Máximo 20 itens" as POL_MAX_ITENS <<Policy>>
+rectangle "Status válido" as POL_STATUS_VALIDO <<Policy>>
+rectangle "Produto ativo" as POL_PRODUTO_ATIVO <<Policy>>
 
 ' Fluxos Alternativos (Cenários de erro)
-rectangle "Estoque insuficiente" as ALT_ESTOQUE <<Alternative>>
-rectangle "Cliente não identificado" as ALT_CLIENTE <<Alternative>>
-rectangle "Pagamento rejeitado" as ALT_PAGAMENTO <<Alternative>>
-rectangle "Timeout de pagamento" as ALT_TIMEOUT <<Alternative>>
-rectangle "Erro na cozinha" as ALT_COZINHA <<Alternative>>
-rectangle "Dados inválidos" as ALT_DADOS <<Alternative>>
-rectangle "Valor abaixo do mínimo" as ALT_VALOR <<Alternative>>
-rectangle "Limite de itens excedido" as ALT_LIMITE <<Alternative>>
-rectangle "Cliente inativo" as ALT_INATIVO <<Alternative>>
-rectangle "Produto indisponível" as ALT_PRODUTO <<Alternative>>
+rectangle "Valor muito baixo" as ALT_VALOR_BAIXO <<Alternative>>
+rectangle "Muitos itens" as ALT_MUITOS_ITENS <<Alternative>>
+rectangle "Status inválido" as ALT_STATUS_INVALIDO <<Alternative>>
+rectangle "Produto inativo" as ALT_PRODUTO_INATIVO <<Alternative>>
+rectangle "Webhook inválido" as ALT_WEBHOOK_INVALIDO <<Alternative>>
 
 ' Sistemas Externos
-rectangle "Sistema de Pagamento" as SYS_PAGAMENTO <<System>>
-rectangle "Sistema de Estoque" as SYS_ESTOQUE <<System>>
-rectangle "Sistema de Cozinha" as SYS_COZINHA <<System>>
+rectangle "Mercado Pago" as SYS_MERCADO_PAGO <<System>>
+rectangle "Banco de dados" as SYS_DB <<System>>
+rectangle "Sistema de filas" as SYS_FILAS <<System>>
 
-' Fluxo Principal
-Cliente --> CMD_ACESSO
-CMD_ACESSO --> EVT_SISTEMA_CARREGADO
-EVT_SISTEMA_CARREGADO --> CMD_VISUALIZA
-CMD_VISUALIZA --> EVT_CARDAPIO_EXIBIDO
-EVT_CARDAPIO_EXIBIDO --> CMD_SELECIONA
-CMD_SELECIONA --> POL_ESTOQUE
-POL_ESTOQUE --> EVT_PRODUTO_SELECIONADO
-EVT_PRODUTO_SELECIONADO --> CMD_ADICIONA
-CMD_ADICIONA --> POL_LIMITE_ITENS
-POL_LIMITE_ITENS --> EVT_ITEM_ADICIONADO
-EVT_ITEM_ADICIONADO --> EVT_CARRINHO_ATUALIZADO
-EVT_CARRINHO_ATUALIZADO --> CMD_FINALIZA
-CMD_FINALIZA --> POL_VALOR_MINIMO
-POL_VALOR_MINIMO --> EVT_PEDIDO_CRIADO
-EVT_PEDIDO_CRIADO --> CMD_INFORMA
-CMD_INFORMA --> POL_DADOS_CLIENTE
-POL_DADOS_CLIENTE --> EVT_CLIENTE_IDENTIFICADO
-EVT_CLIENTE_IDENTIFICADO --> EVT_PAGAMENTO_INICIADO
-EVT_PAGAMENTO_INICIADO --> SYS_PAGAMENTO
-SYS_PAGAMENTO --> EVT_QRCODE_GERADO
-EVT_QRCODE_GERADO --> CMD_CONFIRMA
-CMD_CONFIRMA --> POL_TEMPO_PAGAMENTO
-POL_TEMPO_PAGAMENTO --> EVT_PAGAMENTO_CONFIRMADO
-EVT_PAGAMENTO_CONFIRMADO --> EVT_PEDIDO_PAGO
-EVT_PEDIDO_PAGO --> EVT_PEDIDO_COZINHA
-EVT_PEDIDO_COZINHA --> SYS_COZINHA
-SYS_COZINHA --> EVT_PEDIDO_PREPARANDO
-EVT_PEDIDO_PREPARANDO --> EVT_PEDIDO_PRONTO
-EVT_PEDIDO_PRONTO --> EVT_PEDIDO_ENTREGUE
+' Fluxo Principal - Cliente
+Cliente --> CMD_CHECKOUT
+CMD_CHECKOUT --> POL_VALOR_MINIMO
+POL_VALOR_MINIMO --> POL_MAX_ITENS
+POL_MAX_ITENS --> EVT_PEDIDO_IDENTIFICADO
+EVT_PEDIDO_IDENTIFICADO --> SYS_MERCADO_PAGO
+SYS_MERCADO_PAGO --> EVT_PAGAMENTO_PROCESSADO
+EVT_PAGAMENTO_PROCESSADO --> SYS_FILAS
+SYS_FILAS --> EVT_PEDIDO_PREPARO
+
+' Fluxo - Cozinha
+EVT_PEDIDO_PREPARO --> CMD_PREPARA
+CMD_PREPARA --> EVT_PEDIDO_FINALIZADO
+
+' Fluxo - Gerente
+Gerente --> CMD_ATUALIZA
+CMD_ATUALIZA --> POL_STATUS_VALIDO
+POL_STATUS_VALIDO --> EVT_STATUS_ATUALIZADO
+
+Gerente --> CMD_GERENCIA
+CMD_GERENCIA --> POL_PRODUTO_ATIVO
+POL_PRODUTO_ATIVO --> EVT_PRODUTO_ALTERADO
+
+' Fluxo - Consulta
+Cliente --> CMD_CONSULTA
+CMD_CONSULTA --> EVT_STATUS_ATUALIZADO
+
+' Fluxo - Webhook
+SYS_MERCADO_PAGO --> CMD_WEBHOOK
+CMD_WEBHOOK --> EVT_WEBHOOK_RECEBIDO
+EVT_WEBHOOK_RECEBIDO --> EVT_PAGAMENTO_PROCESSADO
 
 ' Fluxos Alternativos
-ALT_ESTOQUE --> EVT_PEDIDO_CANCELADO
-ALT_CLIENTE --> EVT_PEDIDO_CANCELADO
-ALT_PAGAMENTO --> EVT_PEDIDO_CANCELADO
-ALT_TIMEOUT --> EVT_PEDIDO_CANCELADO
-ALT_COZINHA --> EVT_PEDIDO_CANCELADO
-ALT_DADOS --> EVT_PEDIDO_CANCELADO
-ALT_VALOR --> EVT_PEDIDO_CANCELADO
-ALT_LIMITE --> EVT_PEDIDO_CANCELADO
-ALT_INATIVO --> EVT_PEDIDO_CANCELADO
-ALT_PRODUTO --> EVT_PEDIDO_CANCELADO
+ALT_VALOR_BAIXO --> EVT_PEDIDO_IDENTIFICADO
+ALT_MUITOS_ITENS --> EVT_PEDIDO_IDENTIFICADO
+ALT_STATUS_INVALIDO --> EVT_STATUS_ATUALIZADO
+ALT_PRODUTO_INATIVO --> EVT_PRODUTO_ALTERADO
+ALT_WEBHOOK_INVALIDO --> EVT_WEBHOOK_RECEBIDO
 
-' Consulta de Status
-CMD_STATUS --> EVT_STATUS_CONSULTADO
-
-' Cancelamento
-CMD_CANCELA --> POL_TRANSICOES
-POL_TRANSICOES --> EVT_PEDIDO_CANCELADO
-
-' Validações Específicas
-POL_CPF --> POL_DADOS_CLIENTE
-POL_EMAIL --> POL_DADOS_CLIENTE
-POL_QUANTIDADE --> POL_LIMITE_ITENS
-POL_PRECO --> POL_VALOR_MINIMO
+' Persistência
+EVT_PEDIDO_IDENTIFICADO --> SYS_DB
+EVT_PAGAMENTO_PROCESSADO --> SYS_DB
+EVT_STATUS_ATUALIZADO --> SYS_DB
+EVT_PRODUTO_ALTERADO --> SYS_DB
 
 @enduml 

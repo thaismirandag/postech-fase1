@@ -1,16 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.clean_architecture.api.admin.cliente import router as admin_clientes
-from src.clean_architecture.api.admin.pedido import router as admin_pedidos
-from src.clean_architecture.api.admin.produto import router as admin_produtos
-from src.clean_architecture.api.public.cliente import router as public_cliente
-from src.clean_architecture.api.public.pagamento import (
-    router as public_pagamento,
-)
-from src.clean_architecture.api.public.pedido import router as public_pedidos
-from src.clean_architecture.api.public.produto import router as public_produtos
-from src.clean_architecture.api.public.auth import router as public_login
+from src.clean_architecture.api.admin.auth import router as auth_router
+from src.clean_architecture.api.admin.cliente import router as cliente_router
+from src.clean_architecture.api.admin.pedido import router as pedido_router
+from src.clean_architecture.api.admin.produto import router as produto_router
+from src.clean_architecture.api.admin.pagamento import router as pagamento_router
 
 from script.popular_tb_produtos import popular_produtos
 
@@ -34,15 +29,9 @@ def health_check():
     """Endpoint de health check para Kubernetes probes"""
     return {"status": "healthy", "version": "2.0.0"}
 
-# Rotas públicas
-app.include_router(public_login)
-app.include_router(public_cliente)
-app.include_router(public_produtos)
-app.include_router(public_pedidos)
-app.include_router(public_pagamento)
-
-
-# Rotas administrativas
-app.include_router(admin_pedidos)
-app.include_router(admin_clientes)
-app.include_router(admin_produtos)
+# Todas as rotas unificadas (públicas e administrativas)
+app.include_router(auth_router)
+app.include_router(cliente_router)
+app.include_router(produto_router)
+app.include_router(pedido_router)
+app.include_router(pagamento_router)

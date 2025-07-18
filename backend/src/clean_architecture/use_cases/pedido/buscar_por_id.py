@@ -10,4 +10,5 @@ class BuscarPedidoPorIDUseCase:
         pedido = pedido_gateway.buscar_por_id(pedido_id)
         if not pedido:
             raise HTTPException(status_code=404, detail="Pedido não encontrado")
-        return PedidoUtils._to_response(pedido)
+        utils = PedidoUtils()
+        return utils._to_response(pedido)

@@ -7,7 +7,7 @@ echo "Iniciando deploy no Kubernetes..."
 
 # Build da imagem de produção
 echo "Build da imagem de produção..."
-docker build -f backend/Dockerfile.prod -t postech-app:latest ./backend
+docker build -f backend/Dockerfile -t postech-app:latest ./backend
 
 # Aplicar recursos Kubernetes
 echo "Aplicando recursos Kubernetes..."

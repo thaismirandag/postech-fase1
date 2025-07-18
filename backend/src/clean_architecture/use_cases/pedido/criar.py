@@ -30,4 +30,5 @@ class CriarPedidoUseCase:
         pedido = Pedido.criar(cliente_id=pedido_create.cliente_id, itens=itens)
         pedido = pedido_gateway.salvar(pedido)
         fila_pedido_gateway.enfileirar(pedido.id)
-        return PedidoUtils._to_response(pedido)
+        utils = PedidoUtils()
+        return utils._to_response(pedido)

@@ -9,4 +9,5 @@ class BuscarPedidoPorClienteUseCase:
 
     def execute(self, cliente_id: UUID) -> list[PedidoResponse]:
         pedidos = self.pedido_gateway.buscar_por_cliente(cliente_id)
-        return [PedidoUtils._to_response(p) for p in pedidos]
+        utils = PedidoUtils()
+        return [utils._to_response(p) for p in pedidos]

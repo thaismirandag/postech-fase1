@@ -6,4 +6,5 @@ from src.clean_architecture.use_cases.fila_pedidos.listar_em_aberto import Lista
 class FilaPedidosController:
     def listar_em_aberto(db: Session):
         gateway = FilaPedidosGateway(db)
-        return ListaPedidosEmabertoUseCase.execute(gateway)
+        use_case = ListaPedidosEmabertoUseCase()
+        return use_case.execute(gateway)

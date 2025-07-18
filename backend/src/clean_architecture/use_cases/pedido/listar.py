@@ -30,4 +30,5 @@ class ListarPedidoUseCase:
             key=lambda p: (prioridade_status.get(p.status, 999), p.data_criacao)
         )
         
-        return [PedidoUtils._to_response(p) for p in pedidos_ordenados]
+        utils = PedidoUtils()
+        return [utils._to_response(p) for p in pedidos_ordenados]
