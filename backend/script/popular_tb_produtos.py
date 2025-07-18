@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from src.infrastructure.db.models.produto_model import ProdutoModel
+from src.clean_architecture.external.db.models.produto_model import ProdutoModel
 
 # Usar DATABASE_URL do ambiente
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/tech_challenge")

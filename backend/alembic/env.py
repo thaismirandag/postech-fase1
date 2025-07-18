@@ -6,13 +6,11 @@ from alembic import context
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
-
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(ROOT_DIR))
 
-from src.infrastructure.db.session import Base
-from src.infrastructure.db.models import ClienteModel, ProdutoModel, PedidoModel, ItemPedidoModel, FilaPedidosModel
-
+from src.clean_architecture.external.db.session import Base
+from src.clean_architecture.external.db.models import ClienteModel, ProdutoModel, PedidoModel, ItemPedidoModel, FilaPedidosModel
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
