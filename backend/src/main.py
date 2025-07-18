@@ -15,8 +15,9 @@ from src.clean_architecture.api.public.auth import router as public_login
 from script.popular_tb_produtos import popular_produtos
 
 app = FastAPI(
-    title="API Autoatendimento Fast Food",
-    version="1.0.0",
+    title="Postech Fast Food API",
+    description="API para sistema de autoatendimento de fast food",
+    version="2.0.0",
 )
 
 app.add_middleware(
@@ -26,6 +27,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Health check endpoint para Kubernetes probes
+@app.get("/health")
+def health_check():
+    """Endpoint de health check para Kubernetes probes"""
+    return {"status": "healthy", "version": "2.0.0"}
 
 # Rotas públicas
 app.include_router(public_login)

@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postech-app-deployment
+  namespace: postech-fase2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: postech-app
+  template:
+    metadata:
+      labels:
+        app: postech-app
+    spec:
+      containers:
+      - name: postech-app
+        image: postech-app:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: postech-app-config
+              key: DATABASE_URL
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: postech-app-config
+              key: POSTGRES_DB
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: postech-app-config
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postech-app-secret
+              key: POSTGRES_PASSWORD
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: postech-app-secret
+              key: SECRET_KEY
+        - name: PYTHONPATH
+          valueFrom:
+            configMapKeyRef:
+              name: postech-app-config
+              key: PYTHONPATH
+        - name: PYTHONUNBUFFERED
+          valueFrom:
+            configMapKeyRef:
+              name: postech-app-config
+              key: PYTHONUNBUFFERED
+        - name: PYTHONDONTWRITEBYTECODE
+          valueFrom:
+            configMapKeyRef:
+              name: postech-app-config
+              key: PYTHONDONTWRITEBYTECODE
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postech-app-service
+  namespace: postech-fase2
+spec:
+  selector:
+    app: postech-app
+  ports:
+  - port: 80
+    targetPort: 8000
+  type: LoadBalancer 

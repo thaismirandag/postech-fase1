@@ -15,6 +15,13 @@ class PedidoCreate(BaseModel):
     itens: list[ItemPedidoDTO]
 
 
+class CheckoutPedidoRequest(BaseModel):
+    """DTO para checkout de pedido - Fase 2"""
+    cliente_id: UUID | None = None  # Cliente pode ser anônimo
+    itens: list[ItemPedidoDTO]
+    observacoes: str | None = None
+
+
 class PedidoResponse(BaseModel):
     id: UUID
     cliente_id: UUID
@@ -22,5 +29,15 @@ class PedidoResponse(BaseModel):
     data_criacao: datetime
     itens: list[ItemPedidoDTO]
 
+
 class AtualizarStatusPedidoDTO(BaseModel):
     status: StatusPedido
+
+
+class StatusPagamentoResponse(BaseModel):
+    """DTO para consulta de status de pagamento - Fase 2"""
+    pedido_id: UUID
+    status_pagamento: str  # "aprovado", "pendente", "rejeitado", "cancelado"
+    data_confirmacao: datetime | None = None
+    valor: float
+    qrcode_url: str | None = None

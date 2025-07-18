@@ -1,147 +1,188 @@
-# 📟 Tech Challenge - Sistema de Autoatendimento de Fast Food
+# Sistema de Autoatendimento Fast Food - Fase 2
 
-Este projeto é um sistema de autoatendimento desenvolvido para uma lanchonete, como parte da Fase 1 do Tech Challenge da pós de arquitetura de software da FIAP. O sistema visa facilitar o gerenciamento de pedidos, produtos e a simulação de pagamento via QR Code do Mercado Pago.
+## Visão Geral
+Sistema completo de autoatendimento para fast food desenvolvido com Clean Architecture, implementando todos os requisitos da Fase 2 do Tech Challenge.
 
-## 📃 Sumário
+## Funcionalidades da Fase 2
 
-- [📟 Sobre o Projeto](#-tech-challenge---sistema-de-autoatendimento-de-fast-food)
-- [⚙️ Tecnologias Utilizadas](#⚙%ef%b8%8f-tecnologias-utilizadas)
-- [🧹 Arquitetura Hexagonal](#-arquitetura-hexagonal)
-- [🚀 Como Executar o Projeto](#-como-executar-o-projeto)
-- [🔗 Endpoints Principais](#-endpoints-principais)
-- [👥 Desenvolvedores](#-desenvolvedores)
-- [📽️ Demo](https://youtu.be/2qGpN0MsCpQ)
+### ✅ APIs Implementadas
+- **Checkout de Pedido**: Recebe produtos e retorna identificação do pedido
+- **Consulta Status de Pagamento**: Verifica se pagamento foi aprovado
+- **Webhook Pagamento**: Recebe confirmações do Mercado Pago
+- **Listagem Ordenada**: Pedidos ordenados por status e data
+- **Atualização de Status**: Com validações de transição
 
----
+### ✅ Regras de Negócio
+- Valor mínimo/máximo de pedidos
+- Limite de itens e quantidades
+- Horário de funcionamento
+- Validações de CPF, email, dados
+- Transições de status validadas
 
-## ⚙️ Tecnologias Utilizadas
+### ✅ Arquitetura
+- **Clean Architecture/Hexagonal**: Separação clara de responsabilidades
+- **DDD**: Entidades, agregados e repositórios bem definidos
+- **Validações Avançadas**: No domínio e use-cases
+- **Kubernetes**: Deploy completo com HPA, ConfigMaps, Secrets
 
-- Python 3.11
-- FastAPI
-- SQLAlchemy
-- Alembic
-- PostgreSQL
-- Docker & Docker Compose
-- Pydantic
-
----
-
-## 🧹 Arquitetura Hexagonal
-
-O projeto segue os princípios da arquitetura hexagonal (Ports & Adapters), organizando as responsabilidades por camadas:
-
-- `domain/`: Entidades e regras de negócio
-- `application/services/`: Orquestração da lógica de negócio
-- `ports/`: Interfaces de entrada e saída (contracts)
-- `adapters/input/`: Controllers (FastAPI)
-- `adapters/output/`: Repositórios e serviços externos
-- `infrastructure/db/`: Modelos ORM, sessão e configurações do banco
-
----
-
-## 🚀 Como executar o projeto
-
-### 📦 Pré-requisitos
-- Docker
-- Docker Compose
-
-### ▶️ Subindo o ambiente
-
-1. **Clone o repositório:**
-```bash
-git clone https://github.com/thaismirandag/postech-fase1.git
-```
-
-2. **Configure as variáveis de ambiente:**
-Crie um arquivo `.env` na pasta `backend` com base no `.env-example`.
-
-3. **Suba o ambiente com Docker Compose:**
-```bash
-docker-compose up --build
-```
-
-4. **Acesso:**
-- API: http://localhost:8000
-- Documentação Swagger: http://localhost:8000/docs
-
-5. **Rodar as migrações Alembic**
-```bash
-docker-compose exec app poetry run alembic upgrade head
-```
-
-6. **Gerar nova migração Alembic:**
-```bash
-docker-compose exec app poetry run alembic revision --autogenerate -m "mensagem de migração"
-docker-compose exec app poetry run alembic upgrade head
-```
-
-7. **Executar Ruff (linter):**
-```bash
-docker-compose exec app poetry run ruff check src/
-docker-compose exec app poetry run ruff check src/ --fix
-```
-
----
-
-## 🔗 Endpoints principais
-
-### 👤 Clientes
-- `POST /v1/api/public/clientes/` – Criar ou obter cliente (identificado ou anônimo)
-- `GET /v1/api/admin/clientes/` – Listar todos os clientes (admin)
-- `GET /v1/api/admin/clientes/{cpf}` – Buscar cliente por cpf (admin)
-
-### 🍔 Produtos
-- `GET /v1/api/public/produtos/` – Listar produtos disponíveis
-- `POST /v1/api/admin/produtos/` – Criar produto (admin)
-- `DELETE /v1/api/admin/produtos/{produto_id}` – Remover produto (admin)
-
-### 🧾 Pedidos
-- `POST /v1/api/public/pedidos/` – Cliente cria um pedido (checkout)
-- `GET /v1/api/public/pedidos/{pedido_id}` – Cliente acompanha status do pedido
-- `GET /v1/api/admin/pedidos/` – Listar todos os pedidos (admin)
-- `GET /v1/api/admin/pedidos/em-aberto` – Listar pedidos em aberto (admin)
-- `PATCH /v1/api/admin/pedidos/{pedido_id}/status` – Atualizar status do pedido (admin)
-- `DELETE /v1/api/admin/pedidos/{pedido_id}` – Deletar pedido (admin)
-
-### 💳 Pagamento
-- `GET /v1/api/public/pagamento/qrcode` – Exibir QRCode do Mercado Pago
-
----
-
-## 📄 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 postech-fase1/
 ├── backend/
-│   ├── alembic/                 # Migrações do banco
-│   │   └── versions/            # Versões geradas
 │   ├── src/
-│   │   ├── domain/              # Entidades de negócio
-│   │   │   └── models/
-│   │   ├── application/         # Serviços de aplicação
-│   │   ├── adapters/            # Controllers e repositórios
-│   │   ├── infrastructure/      # Banco de dados, configs
-│   │   │   ├── db/
-│   │   │   │   ├── models/
-│   │   │   │   ├── session.py
-│   ├── Dockerfile               # Dockerfile
-│   ├── .env                     # Variáveis de ambiente
-│   ├── pyproject.toml           # Configuração do projeto
-├── docker-compose.yml           # Docker Compose
-├── docs/                        # Documentação e diagramas
-└── README.md
+│   │   ├── clean_architecture/
+│   │   │   ├── api/           # Controllers HTTP
+│   │   │   ├── dtos/          # Data Transfer Objects
+│   │   │   ├── entities/      # Entidades de domínio
+│   │   │   ├── use_cases/     # Casos de uso
+│   │   │   ├── gateways/      # Implementações de repositórios
+│   │   │   └── interfaces/    # Contratos/Portas
+│   │   └── main.py           # Aplicação FastAPI
+│   ├── k8s/                  # Manifests Kubernetes
+│   ├── scripts/              # Scripts de automação
+│   └── Dockerfile.prod       # Docker multi-stage
+├── docs/
+│   ├── fase2/               # Documentação específica da Fase 2
+│   └── *.puml               # Diagramas PlantUML
+└── docker-compose.yml       # Ambiente de desenvolvimento
 ```
+
+## Como Executar
+
+### Pré-requisitos
+- Docker e Docker Compose
+- Python 3.11+
+- PostgreSQL (via Docker)
+
+### Desenvolvimento
+```bash
+# Clone o repositório
+git clone <repository-url>
+cd postech-fase1
+
+# Execute com Docker Compose
+docker-compose up -d
+
+# Acesse a API
+curl http://localhost:8000/health
+```
+
+### Produção
+```bash
+# Build da imagem
+docker build -f backend/Dockerfile.prod -t fastfood-api .
+
+# Execute com variáveis de ambiente
+docker run -p 8000:8000 fastfood-api
+```
+
+### Kubernetes
+```bash
+# Deploy no cluster
+cd backend/k8s
+./deploy-k8s.sh
+
+# Verifique os recursos
+kubectl get all -n fastfood
+```
+
+## APIs Principais
+
+### Checkout de Pedido (NOVO)
+```bash
+POST /v1/api/public/pedidos/checkout
+{
+  "cliente_id": "uuid",
+  "itens": [
+    {"produto_id": "uuid", "quantidade": 2}
+  ]
+}
+```
+
+### Consulta Status Pagamento (NOVO)
+```bash
+GET /v1/api/public/pagamento/{pedido_id}/status
+```
+
+### Webhook Mercado Pago (NOVO)
+```bash
+POST /v1/api/public/pagamento/webhook
+```
+
+### Listar Pedidos (ATUALIZADO)
+```bash
+GET /v1/api/admin/pedidos/
+# Ordenação: Pronto > Em Preparação > Recebido
+```
+
+## Documentação
+
+### Swagger/OpenAPI
+```
+http://localhost:8000/docs
+```
+
+### Documentação Completa da Fase 2
+```
+docs/fase2/README.md
+docs/fase2/API_DOCUMENTATION.md
+```
+
+### Diagramas
+- `docs/fase2/event-storming-fase2.puml` - Event Storming detalhado
+- `docs/fase2/fluxos-alternativos.puml` - Cenários de erro
+- `docs/architecture.puml` - Arquitetura geral
+
+## Diferenciais da Fase 2
+
+### ✅ Requisitos Funcionais
+- [x] Checkout de pedido com identificação
+- [x] Consulta de status de pagamento
+- [x] Webhook para confirmação de pagamento
+- [x] Listagem ordenada de pedidos
+- [x] Atualização de status com validações
+- [x] Integração Mercado Pago (mock)
+
+### ✅ Requisitos de Infraestrutura
+- [x] Kubernetes com HPA
+- [x] ConfigMaps e Secrets
+- [x] Deployments e Services
+- [x] Escalabilidade automática
+- [x] Boas práticas de segurança
+
+### ✅ Clean Architecture
+- [x] Separação de responsabilidades
+- [x] Use cases bem definidos
+- [x] Entidades de domínio robustas
+- [x] Validações no domínio
+- [x] Testes automatizados
+
+## Status do Projeto
+
+**Fase 2 - COMPLETA** ✅
+
+- [x] APIs conforme especificação
+- [x] Arquitetura Kubernetes
+- [x] Documentação completa
+- [x] Regras de negócio implementadas
+- [x] Validações avançadas
+- [x] Event Storming detalhado
+- [x] Fluxos alternativos mapeados
+
+## Próximos Passos
+
+Para evolução futura:
+1. Integração real com Mercado Pago
+2. Implementação de filas de mensageria
+3. Métricas e monitoramento
+4. Testes de carga
+5. CI/CD pipeline
 
 ---
 
-## 👥 Desenvolvedores
-- Thais Gomes (@thaismirandag)
-- Murilo Biss (@murilobiss)
-- Matheus Luchiari (@MathLuchiari)
+**Desenvolvido para o Tech Challenge - Fase 2**  
+*Clean Architecture | DDD | Kubernetes | FastAPI*
 
-## 📽️ Demo 
-- [Demostração do projeto](https://youtu.be/2qGpN0MsCpQ)
-
-- [Diagrama de Arquitetura](docs/arquitetura.png)
 
 

@@ -1,11 +1,9 @@
 from uuid import UUID, uuid4
-
-from src.adapters.input.dto.pagamento_dto import PagamentoResponse
-from src.domain.models.pedido import StatusPedido
-from src.ports.services.pagamento_service_port import PagamentoServicePort
+from src.clean_architecture.dtos.pagamento_dto import PagamentoResponse
+from src.clean_architecture.enums.status_pedido import StatusPedido
 
 class GerarQRCodePagamentoUseCase:
-    def __init__():
+    def __init__(self):
         pass
     
     def execute(self) -> PagamentoResponse:

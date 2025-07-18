@@ -1,0 +1,140 @@
+@startuml Event Storming - Fase 2
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+
+title Event Storming - Sistema de Autoatendimento Fast Food - Fase 2
+
+' Definição de cores
+skinparam rectangle {
+    BackgroundColor<<Command>> #FF6B6B
+    BackgroundColor<<Event>> #4ECDC4
+    BackgroundColor<<Policy>> #45B7D1
+    BackgroundColor<<Actor>> #96CEB4
+    BackgroundColor<<System>> #FFEAA7
+    BackgroundColor<<Error>> #D63031
+    BackgroundColor<<Alternative>> #FD79A8
+}
+
+' Ator Principal
+rectangle "Cliente" as Cliente <<Actor>>
+
+' Comandos (Ações que podem ser executadas)
+rectangle "Cliente acessa sistema" as CMD_ACESSO <<Command>>
+rectangle "Cliente visualiza cardápio" as CMD_VISUALIZA <<Command>>
+rectangle "Cliente seleciona produtos" as CMD_SELECIONA <<Command>>
+rectangle "Cliente adiciona ao carrinho" as CMD_ADICIONA <<Command>>
+rectangle "Cliente remove do carrinho" as CMD_REMOVE <<Command>>
+rectangle "Cliente finaliza pedido" as CMD_FINALIZA <<Command>>
+rectangle "Cliente informa dados" as CMD_INFORMA <<Command>>
+rectangle "Cliente confirma pagamento" as CMD_CONFIRMA <<Command>>
+rectangle "Cliente cancela pedido" as CMD_CANCELA <<Command>>
+rectangle "Cliente solicita status" as CMD_STATUS <<Command>>
+
+' Eventos (O que acontece no sistema)
+rectangle "Sistema carregado" as EVT_SISTEMA_CARREGADO <<Event>>
+rectangle "Cardápio exibido" as EVT_CARDAPIO_EXIBIDO <<Event>>
+rectangle "Produto selecionado" as EVT_PRODUTO_SELECIONADO <<Event>>
+rectangle "Item adicionado ao carrinho" as EVT_ITEM_ADICIONADO <<Event>>
+rectangle "Item removido do carrinho" as EVT_ITEM_REMOVIDO <<Event>>
+rectangle "Carrinho atualizado" as EVT_CARRINHO_ATUALIZADO <<Event>>
+rectangle "Pedido criado" as EVT_PEDIDO_CRIADO <<Event>>
+rectangle "Cliente identificado" as EVT_CLIENTE_IDENTIFICADO <<Event>>
+rectangle "Pagamento iniciado" as EVT_PAGAMENTO_INICIADO <<Event>>
+rectangle "QR Code gerado" as EVT_QRCODE_GERADO <<Event>>
+rectangle "Pagamento confirmado" as EVT_PAGAMENTO_CONFIRMADO <<Event>>
+rectangle "Pedido pago" as EVT_PEDIDO_PAGO <<Event>>
+rectangle "Pedido enviado para cozinha" as EVT_PEDIDO_COZINHA <<Event>>
+rectangle "Pedido em preparação" as EVT_PEDIDO_PREPARANDO <<Event>>
+rectangle "Pedido pronto" as EVT_PEDIDO_PRONTO <<Event>>
+rectangle "Pedido entregue" as EVT_PEDIDO_ENTREGUE <<Event>>
+rectangle "Pedido cancelado" as EVT_PEDIDO_CANCELADO <<Event>>
+rectangle "Status consultado" as EVT_STATUS_CONSULTADO <<Event>>
+
+' Policies (Regras de negócio)
+rectangle "Validar estoque disponível" as POL_ESTOQUE <<Policy>>
+rectangle "Validar limite de itens" as POL_LIMITE_ITENS <<Policy>>
+rectangle "Validar dados do cliente" as POL_DADOS_CLIENTE <<Policy>>
+rectangle "Validar valor mínimo" as POL_VALOR_MINIMO <<Policy>>
+rectangle "Validar tempo de pagamento" as POL_TEMPO_PAGAMENTO <<Policy>>
+rectangle "Validar transições de status" as POL_TRANSICOES <<Policy>>
+rectangle "Validar CPF" as POL_CPF <<Policy>>
+rectangle "Validar email" as POL_EMAIL <<Policy>>
+rectangle "Validar quantidade máxima" as POL_QUANTIDADE <<Policy>>
+rectangle "Validar preço do produto" as POL_PRECO <<Policy>>
+
+' Fluxos Alternativos (Cenários de erro)
+rectangle "Estoque insuficiente" as ALT_ESTOQUE <<Alternative>>
+rectangle "Cliente não identificado" as ALT_CLIENTE <<Alternative>>
+rectangle "Pagamento rejeitado" as ALT_PAGAMENTO <<Alternative>>
+rectangle "Timeout de pagamento" as ALT_TIMEOUT <<Alternative>>
+rectangle "Erro na cozinha" as ALT_COZINHA <<Alternative>>
+rectangle "Dados inválidos" as ALT_DADOS <<Alternative>>
+rectangle "Valor abaixo do mínimo" as ALT_VALOR <<Alternative>>
+rectangle "Limite de itens excedido" as ALT_LIMITE <<Alternative>>
+rectangle "Cliente inativo" as ALT_INATIVO <<Alternative>>
+rectangle "Produto indisponível" as ALT_PRODUTO <<Alternative>>
+
+' Sistemas Externos
+rectangle "Sistema de Pagamento" as SYS_PAGAMENTO <<System>>
+rectangle "Sistema de Estoque" as SYS_ESTOQUE <<System>>
+rectangle "Sistema de Cozinha" as SYS_COZINHA <<System>>
+
+' Fluxo Principal
+Cliente --> CMD_ACESSO
+CMD_ACESSO --> EVT_SISTEMA_CARREGADO
+EVT_SISTEMA_CARREGADO --> CMD_VISUALIZA
+CMD_VISUALIZA --> EVT_CARDAPIO_EXIBIDO
+EVT_CARDAPIO_EXIBIDO --> CMD_SELECIONA
+CMD_SELECIONA --> POL_ESTOQUE
+POL_ESTOQUE --> EVT_PRODUTO_SELECIONADO
+EVT_PRODUTO_SELECIONADO --> CMD_ADICIONA
+CMD_ADICIONA --> POL_LIMITE_ITENS
+POL_LIMITE_ITENS --> EVT_ITEM_ADICIONADO
+EVT_ITEM_ADICIONADO --> EVT_CARRINHO_ATUALIZADO
+EVT_CARRINHO_ATUALIZADO --> CMD_FINALIZA
+CMD_FINALIZA --> POL_VALOR_MINIMO
+POL_VALOR_MINIMO --> EVT_PEDIDO_CRIADO
+EVT_PEDIDO_CRIADO --> CMD_INFORMA
+CMD_INFORMA --> POL_DADOS_CLIENTE
+POL_DADOS_CLIENTE --> EVT_CLIENTE_IDENTIFICADO
+EVT_CLIENTE_IDENTIFICADO --> EVT_PAGAMENTO_INICIADO
+EVT_PAGAMENTO_INICIADO --> SYS_PAGAMENTO
+SYS_PAGAMENTO --> EVT_QRCODE_GERADO
+EVT_QRCODE_GERADO --> CMD_CONFIRMA
+CMD_CONFIRMA --> POL_TEMPO_PAGAMENTO
+POL_TEMPO_PAGAMENTO --> EVT_PAGAMENTO_CONFIRMADO
+EVT_PAGAMENTO_CONFIRMADO --> EVT_PEDIDO_PAGO
+EVT_PEDIDO_PAGO --> EVT_PEDIDO_COZINHA
+EVT_PEDIDO_COZINHA --> SYS_COZINHA
+SYS_COZINHA --> EVT_PEDIDO_PREPARANDO
+EVT_PEDIDO_PREPARANDO --> EVT_PEDIDO_PRONTO
+EVT_PEDIDO_PRONTO --> EVT_PEDIDO_ENTREGUE
+
+' Fluxos Alternativos
+ALT_ESTOQUE --> EVT_PEDIDO_CANCELADO
+ALT_CLIENTE --> EVT_PEDIDO_CANCELADO
+ALT_PAGAMENTO --> EVT_PEDIDO_CANCELADO
+ALT_TIMEOUT --> EVT_PEDIDO_CANCELADO
+ALT_COZINHA --> EVT_PEDIDO_CANCELADO
+ALT_DADOS --> EVT_PEDIDO_CANCELADO
+ALT_VALOR --> EVT_PEDIDO_CANCELADO
+ALT_LIMITE --> EVT_PEDIDO_CANCELADO
+ALT_INATIVO --> EVT_PEDIDO_CANCELADO
+ALT_PRODUTO --> EVT_PEDIDO_CANCELADO
+
+' Consulta de Status
+CMD_STATUS --> EVT_STATUS_CONSULTADO
+
+' Cancelamento
+CMD_CANCELA --> POL_TRANSICOES
+POL_TRANSICOES --> EVT_PEDIDO_CANCELADO
+
+' Validações Específicas
+POL_CPF --> POL_DADOS_CLIENTE
+POL_EMAIL --> POL_DADOS_CLIENTE
+POL_QUANTIDADE --> POL_LIMITE_ITENS
+POL_PRECO --> POL_VALOR_MINIMO
+
+@enduml 
