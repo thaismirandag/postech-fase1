@@ -1,16 +1,13 @@
 from uuid import UUID
-
-from src.adapters.input.dto.pedido_dto import PedidoResponse
-from src.application.use_cases.pedido.util import PedidoUtils
-from src.ports.repositories.pedido_repository_port import PedidoRepositoryPort
+from src.clean_architecture.dtos.pedido_dto import PedidoResponse
+from src.clean_architecture.use_cases.pedido.util import PedidoUtils
+from src.clean_architecture.interfaces.gateways.pedido import PedidoGatewayInterface
 
 class BuscarPedidoPorClienteUseCase:
-    def __init__(
-        self,
-        repository: PedidoRepositoryPort,
-    ):
-        self.repository = repository
+    def __init__(self, pedido_gateway: PedidoGatewayInterface):
+        self.pedido_gateway = pedido_gateway
 
     def execute(self, cliente_id: UUID) -> list[PedidoResponse]:
-        pedidos = self.repository.buscar_por_cliente(cliente_id)
-        return [PedidoUtils._to_response(p) for p in pedidos]
+        pedidos = self.pedido_gateway.buscar_por_cliente(cliente_id)
+        utils = PedidoUtils()
+        return [utils._to_response(p) for p in pedidos]

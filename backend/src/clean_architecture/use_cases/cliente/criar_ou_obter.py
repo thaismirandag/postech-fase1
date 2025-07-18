@@ -1,5 +1,4 @@
 from uuid import uuid4
-
 from src.clean_architecture.dtos.cliente_dto import ClienteCreate, ClienteResponse
 from src.clean_architecture.entities.cliente import Cliente
 from src.clean_architecture.gateways.cliente import ClienteGateway
@@ -8,16 +7,30 @@ from src.clean_architecture.use_cases.cliente.buscar_por_email import BuscarClie
 
 class CriarOuObterClienteUseCase:
     def execute(self, cliente_create: ClienteCreate, cliente_gateway: ClienteGateway) -> ClienteResponse:
+        # Validação avançada dos campos
+        if not cliente_create.nome or len(cliente_create.nome.strip()) < 2:
+            raise ValueError("Nome deve ter pelo menos 2 caracteres")
+        
         if cliente_create.cpf:
-            cliente = BuscarClientePorCPFUseCase.execute(cliente_create.cpf, cliente_gateway)
+            # Validação básica de CPF (em produção seria mais robusta)
+            if len(cliente_create.cpf.replace('.', '').replace('-', '')) != 11:
+                raise ValueError("CPF deve ter 11 dígitos")
+            
+            use_case = BuscarClientePorCPFUseCase()
+            cliente = use_case.execute(cliente_create.cpf, cliente_gateway)
             if cliente:
                 return ClienteResponse(**cliente.__dict__)
-
+        
         if cliente_create.email:
-            cliente = BuscarClientePorEmailUseCase.execute(cliente_create.email, cliente_gateway)
+            # Validação básica de email
+            if '@' not in cliente_create.email or '.' not in cliente_create.email:
+                raise ValueError("Email deve ter formato válido")
+            
+            use_case = BuscarClientePorEmailUseCase()
+            cliente = use_case.execute(cliente_create.email, cliente_gateway)
             if cliente:
                 return ClienteResponse(**cliente.__dict__)
-
+        
         # Cria cliente novo (ou anônimo)
         cliente = Cliente(
             id=uuid4(),

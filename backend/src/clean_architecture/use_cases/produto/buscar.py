@@ -1,12 +1,12 @@
-from src.adapters.input.dto.produto_dto import ProdutoResponse
-from src.ports.repositories.produto_repository_port import ProdutoRepositoryPort
+from src.clean_architecture.dtos.produto_dto import ProdutoResponse
+from src.clean_architecture.interfaces.gateways.produto import ProdutoGatewayInterface
 
 class BuscarProdutoUseCase:
-    def __init__(self, produto_repository: ProdutoRepositoryPort):
-        self.produto_repository = produto_repository
+    def __init__(self, produto_gateway: ProdutoGatewayInterface):
+        self.produto_gateway = produto_gateway
 
     def execute(self, produto_id: str) -> ProdutoResponse | None:
-        produto = self.produto_repository.buscar_por_id(produto_id)
+        produto = self.produto_gateway.buscar_por_id(produto_id)
         if produto:
             return ProdutoResponse(**produto.__dict__)
         return None

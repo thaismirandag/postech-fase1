@@ -19,6 +19,8 @@ class ClienteGateway(ClienteGatewayInterface):
         )
         self.db.add(cliente_model)
         self.db.commit()
+        self.db.refresh(cliente_model)
+        return self._to_domain(cliente_model)
 
     def buscar_por_cpf(self, cpf: str) -> Cliente | None:
         model = self.db.query(ClienteModel).filter_by(cpf=cpf).first()

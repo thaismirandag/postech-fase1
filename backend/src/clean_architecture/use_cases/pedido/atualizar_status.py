@@ -12,4 +12,5 @@ class AtualizarStatusPedidoUseCase:
             raise ValueError("Pedido não encontrado")
         pedido.status = novo_status
         pedido = pedido_gateway.salvar(pedido)
-        return PedidoUtils._to_response(pedido)
+        utils = PedidoUtils()
+        return utils._to_response(pedido)

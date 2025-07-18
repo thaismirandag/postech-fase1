@@ -1,7 +1,7 @@
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import Column, DateTime, ForeignKey, String
+from sqlalchemy import Column, DateTime, ForeignKey, String, Float
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -21,6 +21,11 @@ class PagamentoModel(Base):
     status = Column(String, default="pendente", nullable=False)
     data_criacao = Column(DateTime, default=datetime.now(UTC))
     data_confirmacao = Column(DateTime, nullable=True)
+    qrcode_url = Column(String, nullable=True)
+    qrcode_id = Column(String, nullable=True)
+    external_reference = Column(String, nullable=True)
+    payment_id = Column(String, nullable=True)
+    valor = Column(Float, nullable=False, default=0.0)
     pedido = relationship("PedidoModel", back_populates="pagamento")
 
 

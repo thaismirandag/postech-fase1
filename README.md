@@ -1,28 +1,52 @@
 # 📟 Tech Challenge - Sistema de Autoatendimento de Fast Food
 
-Este projeto é um sistema de autoatendimento desenvolvido para uma lanchonete, como parte da Fase 1 do Tech Challenge da pós de arquitetura de software da FIAP. O sistema visa facilitar o gerenciamento de pedidos, produtos e a simulação de pagamento via QR Code do Mercado Pago.
+Este projeto é um sistema de autoatendimento desenvolvido para uma lanchonete, implementado em duas fases do Tech Challenge da pós de arquitetura de software da FIAP. O sistema visa facilitar o gerenciamento de pedidos, produtos e a simulação de pagamento via QR Code do Mercado Pago.
 
 ## 📃 Sumário
 
 - [📟 Sobre o Projeto](#-tech-challenge---sistema-de-autoatendimento-de-fast-food)
-- [⚙️ Tecnologias Utilizadas](#⚙%ef%b8%8f-tecnologias-utilizadas)
+- [🎯 Fases do Projeto](#-fases-do-projeto)
+- [⚙️ Tecnologias Utilizadas](#⚙️-tecnologias-utilizadas)
 - [🧹 Arquitetura Hexagonal](#-arquitetura-hexagonal)
 - [🚀 Como Executar o Projeto](#-como-executar-o-projeto)
 - [🔗 Endpoints Principais](#-endpoints-principais)
+- [📄 Estrutura do Projeto](#-estrutura-do-projeto)
 - [👥 Desenvolvedores](#-desenvolvedores)
-- [📽️ Demo](https://youtu.be/2qGpN0MsCpQ)
+- [📽️ Demo](#-demo)
+
+---
+
+## 🎯 Fases do Projeto
+
+### 📋 Fase 1 - Sistema Básico
+Sistema inicial com funcionalidades básicas de autoatendimento:
+- ✅ Cadastro e consulta de clientes
+- ✅ Gerenciamento de produtos
+- ✅ Criação e acompanhamento de pedidos
+- ✅ Simulação de pagamento via QR Code
+- ✅ Painel administrativo
+
+### 🚀 Fase 2 - Sistema Avançado
+Evolução do sistema com funcionalidades avançadas:
+- ✅ **Checkout de Pedido**: Recebe produtos e retorna identificação do pedido
+- ✅ **Consulta Status de Pagamento**: Verifica se pagamento foi aprovado
+- ✅ **Webhook Pagamento**: Recebe confirmações do Mercado Pago
+- ✅ **Listagem Ordenada**: Pedidos ordenados por status e data
+- ✅ **Atualização de Status**: Com validações de transição
+- ✅ **Regras de Negócio Avançadas**: Valor mínimo/máximo, limites, horários
+- ✅ **Kubernetes**: Deploy completo com HPA, ConfigMaps, Secrets
 
 ---
 
 ## ⚙️ Tecnologias Utilizadas
 
-- Python 3.11
-- FastAPI
-- SQLAlchemy
-- Alembic
-- PostgreSQL
-- Docker & Docker Compose
-- Pydantic
+- **Backend**: Python 3.11, FastAPI, SQLAlchemy, Alembic
+- **Banco de Dados**: PostgreSQL
+- **Containerização**: Docker & Docker Compose
+- **Orquestração**: Kubernetes
+- **Pagamentos**: Mercado Pago SDK (Integração REAL)
+- **Validação**: Pydantic
+- **Autenticação**: JWT
 
 ---
 
@@ -53,7 +77,7 @@ git clone https://github.com/thaismirandag/postech-fase1.git
 ```
 
 2. **Configure as variáveis de ambiente:**
-Crie um arquivo `.env` na pasta `backend` com base no `.env-example`.
+Crie um arquivo `.env` na pasta `backend` com base no `env.example`.
 
 3. **Suba o ambiente com Docker Compose:**
 ```bash
@@ -81,30 +105,65 @@ docker-compose exec app poetry run ruff check src/
 docker-compose exec app poetry run ruff check src/ --fix
 ```
 
+### 🚀 Produção
+```bash
+# Build da imagem
+docker build -f backend/Dockerfile -t fastfood-api ./backend
+
+# Execute com variáveis de ambiente
+docker run -p 8000:8000 fastfood-api
+```
+
+### ☸️ Kubernetes (Fase 2)
+```bash
+# Deploy no cluster
+cd backend/k8s
+./deploy-k8s.sh
+
+# Verifique os recursos
+kubectl get all -n fastfood
+```
+
+### 🚀 Render (Recomendado - Gratuito)
+```bash
+# 1. Faça push do código para GitHub
+# 2. Acesse render.com e conecte o repositório
+# 3. O deploy será automático via render.yaml
+
+# URLs geradas:
+# API: https://fastfood-api.onrender.com
+# Swagger: https://fastfood-api.onrender.com/docs
+```
+
 ---
 
-## 🔗 Endpoints principais
+## 🔗 Endpoints Principais
 
 ### 👤 Clientes
-- `POST /v1/api/public/clientes/` – Criar ou obter cliente (identificado ou anônimo)
+- `POST /v1/api/admin/clientes/` – Criar ou obter cliente (identificado ou anônimo)
 - `GET /v1/api/admin/clientes/` – Listar todos os clientes (admin)
 - `GET /v1/api/admin/clientes/{cpf}` – Buscar cliente por cpf (admin)
 
 ### 🍔 Produtos
-- `GET /v1/api/public/produtos/` – Listar produtos disponíveis
+- `GET /v1/api/admin/produtos/` – Listar produtos disponíveis
 - `POST /v1/api/admin/produtos/` – Criar produto (admin)
 - `DELETE /v1/api/admin/produtos/{produto_id}` – Remover produto (admin)
 
 ### 🧾 Pedidos
-- `POST /v1/api/public/pedidos/` – Cliente cria um pedido (checkout)
-- `GET /v1/api/public/pedidos/{pedido_id}` – Cliente acompanha status do pedido
+- `POST /v1/api/admin/pedidos/` – Cliente cria um pedido
+- `GET /v1/api/admin/pedidos/{pedido_id}` – Cliente acompanha status do pedido
 - `GET /v1/api/admin/pedidos/` – Listar todos os pedidos (admin)
 - `GET /v1/api/admin/pedidos/em-aberto` – Listar pedidos em aberto (admin)
 - `PATCH /v1/api/admin/pedidos/{pedido_id}/status` – Atualizar status do pedido (admin)
 - `DELETE /v1/api/admin/pedidos/{pedido_id}` – Deletar pedido (admin)
 
 ### 💳 Pagamento
-- `GET /v1/api/public/pagamento/qrcode` – Exibir QRCode do Mercado Pago
+- `GET /v1/api/admin/pagamento/qrcode` – Gerar QRCode real do Mercado Pago
+
+### 🚀 Fase 2 - Endpoints Avançados
+- `POST /v1/api/admin/pedidos/checkout` – Checkout de pedido com identificação
+- `GET /v1/api/admin/pagamento/{pedido_id}/status` – Consulta status de pagamento real
+- `POST /v1/api/admin/pagamento/webhook` – Webhook real para confirmação de pagamento
 
 ---
 
@@ -116,17 +175,19 @@ postech-fase1/
 │   ├── alembic/                 # Migrações do banco
 │   │   └── versions/            # Versões geradas
 │   ├── src/
-│   │   ├── domain/              # Entidades de negócio
-│   │   │   └── models/
-│   │   ├── application/         # Serviços de aplicação
-│   │   ├── adapters/            # Controllers e repositórios
-│   │   ├── infrastructure/      # Banco de dados, configs
-│   │   │   ├── db/
-│   │   │   │   ├── models/
-│   │   │   │   ├── session.py
-│   ├── Dockerfile               # Dockerfile
-│   ├── .env                     # Variáveis de ambiente
-│   ├── pyproject.toml           # Configuração do projeto
+│   │   ├── clean_architecture/  # Arquitetura limpa
+│   │   │   ├── api/            # Controllers da API
+│   │   │   ├── controllers/    # Orquestradores
+│   │   │   ├── dtos/           # Data Transfer Objects
+│   │   │   ├── entities/       # Entidades de domínio
+│   │   │   ├── enums/          # Enumerações
+│   │   │   ├── external/       # Serviços externos (Mercado Pago)
+│   │   │   ├── gateways/       # Repositórios
+│   │   │   ├── interfaces/     # Contratos/Portas
+│   │   │   └── use_cases/      # Casos de uso
+│   │   ├── Dockerfile          # Dockerfile
+│   │   ├── env.example         # Variáveis de ambiente
+│   │   └── pyproject.toml      # Configuração do projeto
 ├── docker-compose.yml           # Docker Compose
 ├── docs/                        # Documentação e diagramas
 └── README.md
@@ -142,6 +203,55 @@ postech-fase1/
 ## 📽️ Demo 
 - [Demostração do projeto](https://youtu.be/2qGpN0MsCpQ)
 
-- [Diagrama de Arquitetura](docs/arquitetura.png)
+## 📚 Documentação Adicional
+
+### Swagger/OpenAPI
+```
+http://localhost:8000/docs
+```
+
+### Documentação Completa da Fase 2
+```
+docs/fase2/README.md
+docs/fase2/mercadopago-integration.md
+```
+
+### Diagramas
+- `docs/arquitetura.png` - Diagrama de Arquitetura
+- `docs/fase2/event-storming-fase2.puml` - Event Storming detalhado
+- `docs/fase2/fluxos-alternativos.puml` - Cenários de erro
+- `docs/architecture.puml` - Arquitetura geral
+- **[Event Storming Fase 1 - Miro](https://miro.com/app/board/uXjVI2n2GlA=/)** - Diagrama interativo DDD
+
+---
+
+## 🎯 Status do Projeto
+
+**Fase 1 - COMPLETA** ✅  
+**Fase 2 - COMPLETA** ✅
+
+- [x] APIs conforme especificação
+- [x] Arquitetura Kubernetes
+- [x] Documentação completa
+- [x] Regras de negócio implementadas
+- [x] Validações avançadas
+- [x] Event Storming detalhado
+- [x] Fluxos alternativos mapeados
+- [x] **Integração REAL com Mercado Pago**
+
+## 🔮 Próximos Passos
+
+Para evolução futura:
+1. ✅ Integração real com Mercado Pago (IMPLEMENTADA)
+2. Implementação de filas de mensageria
+3. Métricas e monitoramento
+4. Testes de carga
+5. CI/CD pipeline
+
+---
+
+**Desenvolvido para o Tech Challenge - Fases 1 e 2**  
+*Clean Architecture | DDD | Kubernetes | FastAPI | Mercado Pago*
+
 
 

@@ -1,0 +1,130 @@
+@startuml Fluxos Alternativos - Fase 2
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+
+title Fluxos Alternativos - Cenários de Erro e Recuperação
+
+' Definição de cores
+skinparam rectangle {
+    BackgroundColor<<Start>> #2ECC71
+    BackgroundColor<<Process>> #3498DB
+    BackgroundColor<<Decision>> #F39C12
+    BackgroundColor<<Error>> #E74C3C
+    BackgroundColor<<Recovery>> #9B59B6
+    BackgroundColor<<End>> #34495E
+}
+
+' Fluxo 1: Estoque Insuficiente
+rectangle "Cliente seleciona produto" as F1_START <<Start>>
+rectangle "Verificar estoque" as F1_CHECK <<Process>>
+diamond "Estoque suficiente?" as F1_DECISION <<Decision>>
+rectangle "Produto indisponível" as F1_ERROR <<Error>>
+rectangle "Sugerir produto similar" as F1_RECOVERY <<Recovery>>
+rectangle "Cliente escolhe alternativa" as F1_ALT <<Process>>
+rectangle "Continuar pedido" as F1_CONTINUE <<Process>>
+rectangle "Pedido finalizado" as F1_END <<End>>
+
+F1_START --> F1_CHECK
+F1_CHECK --> F1_DECISION
+F1_DECISION -->|Não| F1_ERROR
+F1_ERROR --> F1_RECOVERY
+F1_RECOVERY --> F1_ALT
+F1_ALT --> F1_CONTINUE
+F1_CONTINUE --> F1_END
+F1_DECISION -->|Sim| F1_CONTINUE
+
+' Fluxo 2: Pagamento Rejeitado
+rectangle "Cliente confirma pagamento" as F2_START <<Start>>
+rectangle "Processar pagamento" as F2_PROCESS <<Process>>
+diamond "Pagamento aprovado?" as F2_DECISION <<Decision>>
+rectangle "Pagamento rejeitado" as F2_ERROR <<Error>>
+rectangle "Notificar cliente" as F2_NOTIFY <<Process>>
+rectangle "Gerar novo QR Code" as F2_NEW_QR <<Recovery>>
+rectangle "Cliente tenta novamente" as F2_RETRY <<Process>>
+diamond "Tentativas esgotadas?" as F2_RETRY_DECISION <<Decision>>
+rectangle "Cancelar pedido" as F2_CANCEL <<Process>>
+rectangle "Pedido cancelado" as F2_END <<End>>
+
+F2_START --> F2_PROCESS
+F2_PROCESS --> F2_DECISION
+F2_DECISION -->|Não| F2_ERROR
+F2_ERROR --> F2_NOTIFY
+F2_NOTIFY --> F2_NEW_QR
+F2_NEW_QR --> F2_RETRY
+F2_RETRY --> F2_RETRY_DECISION
+F2_RETRY_DECISION -->|Sim| F2_CANCEL
+F2_CANCEL --> F2_END
+F2_RETRY_DECISION -->|Não| F2_PROCESS
+F2_DECISION -->|Sim| F2_END
+
+' Fluxo 3: Timeout de Pagamento
+rectangle "QR Code gerado" as F3_START <<Start>>
+rectangle "Iniciar timer (30 min)" as F3_TIMER <<Process>>
+diamond "Pagamento realizado?" as F3_DECISION <<Decision>>
+rectangle "Timeout atingido" as F3_TIMEOUT <<Error>>
+rectangle "Cancelar pagamento" as F3_CANCEL <<Process>>
+rectangle "Liberar estoque" as F3_LIBERAR <<Recovery>>
+rectangle "Notificar cancelamento" as F3_NOTIFY <<Process>>
+rectangle "Pedido cancelado" as F3_END <<End>>
+
+F3_START --> F3_TIMER
+F3_TIMER --> F3_DECISION
+F3_DECISION -->|Não| F3_TIMEOUT
+F3_TIMEOUT --> F3_CANCEL
+F3_CANCEL --> F3_LIBERAR
+F3_LIBERAR --> F3_NOTIFY
+F3_NOTIFY --> F3_END
+F3_DECISION -->|Sim| F3_END
+
+' Fluxo 4: Erro na Cozinha
+rectangle "Pedido enviado para cozinha" as F4_START <<Start>>
+rectangle "Cozinha processa pedido" as F4_PROCESS <<Process>>
+diamond "Ingredientes disponíveis?" as F4_DECISION <<Decision>>
+rectangle "Ingrediente faltando" as F4_ERROR <<Error>>
+rectangle "Notificar cozinha" as F4_NOTIFY <<Process>>
+rectangle "Substituir ingrediente" as F4_SUBSTITUTE <<Recovery>>
+rectangle "Continuar preparo" as F4_CONTINUE <<Process>>
+diamond "Substituição possível?" as F4_SUB_DECISION <<Decision>>
+rectangle "Cancelar pedido" as F4_CANCEL <<Process>>
+rectangle "Pedido cancelado" as F4_END <<End>>
+
+F4_START --> F4_PROCESS
+F4_PROCESS --> F4_DECISION
+F4_DECISION -->|Não| F4_ERROR
+F4_ERROR --> F4_NOTIFY
+F4_NOTIFY --> F4_SUBSTITUTE
+F4_SUBSTITUTE --> F4_SUB_DECISION
+F4_SUB_DECISION -->|Sim| F4_CONTINUE
+F4_SUB_DECISION -->|Não| F4_CANCEL
+F4_CANCEL --> F4_END
+F4_DECISION -->|Sim| F4_CONTINUE
+
+' Fluxo 5: Dados Inválidos
+rectangle "Cliente informa dados" as F5_START <<Start>>
+rectangle "Validar CPF" as F5_CPF <<Process>>
+diamond "CPF válido?" as F5_CPF_DECISION <<Decision>>
+rectangle "CPF inválido" as F5_CPF_ERROR <<Error>>
+rectangle "Solicitar correção" as F5_CORRECT <<Recovery>>
+rectangle "Cliente corrige dados" as F5_FIX <<Process>>
+rectangle "Validar email" as F5_EMAIL <<Process>>
+diamond "Email válido?" as F5_EMAIL_DECISION <<Decision>>
+rectangle "Email inválido" as F5_EMAIL_ERROR <<Error>>
+rectangle "Dados validados" as F5_VALID <<Process>>
+rectangle "Continuar pedido" as F5_END <<End>>
+
+F5_START --> F5_CPF
+F5_CPF --> F5_CPF_DECISION
+F5_CPF_DECISION -->|Não| F5_CPF_ERROR
+F5_CPF_ERROR --> F5_CORRECT
+F5_CORRECT --> F5_FIX
+F5_FIX --> F5_CPF
+F5_CPF_DECISION -->|Sim| F5_EMAIL
+F5_EMAIL --> F5_EMAIL_DECISION
+F5_EMAIL_DECISION -->|Não| F5_EMAIL_ERROR
+F5_EMAIL_ERROR --> F5_CORRECT
+F5_EMAIL_DECISION -->|Sim| F5_VALID
+F5_VALID --> F5_END
+
+@enduml 
