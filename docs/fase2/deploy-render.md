@@ -24,9 +24,11 @@ Este guia mostra como fazer o deploy do sistema de autoatendimento Fast Food no 
 
 Certifique-se de que o repositório contém:
 - ✅ `render.yaml` (configuração do Render)
-- ✅ `requirements.txt` (dependências Python)
+- ✅ `backend/pyproject.toml` (dependências Python via Poetry)
 - ✅ `src/main.py` (aplicação FastAPI)
 - ✅ `alembic/` (migrações do banco)
+
+**Nota:** O projeto usa Poetry para gerenciamento de dependências. O Render detectará automaticamente o `pyproject.toml` e instalará as dependências via Poetry.
 
 ### 2. Criar Conta no Render
 
@@ -210,7 +212,7 @@ curl -X POST "https://fastfood-api.onrender.com/v1/api/admin/pedidos/checkout" \
 
 ### Erro: "Build Failed"
 **Solução:**
-1. Verifique o `requirements.txt`
+1. Verifique o `backend/pyproject.toml`
 2. Confirme que `src/main.py` existe
 3. Verifique os logs de build
 
