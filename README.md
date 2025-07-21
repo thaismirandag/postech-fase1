@@ -73,7 +73,7 @@ O projeto segue os princípios da arquitetura hexagonal (Ports & Adapters), orga
 
 1. **Clone o repositório:**
 ```bash
-git clone https://github.com/thaismirandag/postech-fase1.git
+git clone https://github.com/thaismirandag/postech-fiap.git
 ```
 
 2. **Configure as variáveis de ambiente:**
@@ -170,7 +170,7 @@ kubectl get all -n fastfood
 ## 📄 Estrutura do Projeto
 
 ```
-postech-fase1/
+postech-fiap/
 ├── backend/
 │   ├── alembic/                 # Migrações do banco
 │   │   └── versions/            # Versões geradas
