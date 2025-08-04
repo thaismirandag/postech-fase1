@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from src.clean_architecture.entities.produto import Produto
 
+
 class ProdutoGatewayInterface(ABC):
     @abstractmethod
     def salvar(self, produto: Produto) -> Produto:

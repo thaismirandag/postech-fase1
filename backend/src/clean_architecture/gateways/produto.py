@@ -1,10 +1,12 @@
 from decimal import Decimal
+from uuid import UUID
+
 from sqlalchemy.orm import Session
 
+from src.clean_architecture.entities.produto import Produto
+from src.clean_architecture.external.db.models.produto_model import ProdutoModel
 from src.clean_architecture.interfaces.gateways.produto import ProdutoGatewayInterface
 
-from src.clean_architecture.external.db.models.produto_model import ProdutoModel
-from src.clean_architecture.entities.produto import Produto
 
 class ProdutoGateway(ProdutoGatewayInterface):
     def __init__(self, db: Session):
@@ -21,7 +23,8 @@ class ProdutoGateway(ProdutoGatewayInterface):
     def salvar(self, produto: Produto) -> Produto:
         model = ProdutoModel(
             nome=produto.nome,
-            categoria=produto.categoria,
+            descricao=produto.descricao,
+            categoria_id=produto.categoria_id,
             preco=float(produto.preco),
         )
         self.db.add(model)
@@ -37,8 +40,8 @@ class ProdutoGateway(ProdutoGatewayInterface):
         self.db.delete(model)
         self.db.commit()
 
-    def buscar_por_categoria(self, categoria: str) -> list[Produto]:
-        models = self.db.query(ProdutoModel).filter_by(categoria=categoria).all()
+    def buscar_por_categoria(self, categoria_id: UUID) -> list[Produto]:
+        models = self.db.query(ProdutoModel).filter_by(categoria_id=categoria_id).all()
         return [self._to_domain(m) for m in models]
 
 
@@ -46,6 +49,7 @@ class ProdutoGateway(ProdutoGatewayInterface):
         return Produto(
             id=model.id,
             nome=model.nome,
-            categoria=model.categoria,
+            descricao=model.descricao,
             preco=Decimal(str(model.preco)),
+            categoria_id=model.categoria_id,
         )

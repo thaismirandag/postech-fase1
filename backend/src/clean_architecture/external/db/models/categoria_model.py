@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 
 from src.clean_architecture.external.db.session import Base
 
+
 class CategoriaModel(Base):
     __tablename__ = "tb_categorias"
     __table_args__ = {'extend_existing': True}

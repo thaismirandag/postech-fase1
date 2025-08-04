@@ -1,10 +1,11 @@
 from uuid import UUID
+
 from sqlalchemy.orm import Session
 
-from src.clean_architecture.interfaces.gateways.cliente import ClienteGatewayInterface
 from src.clean_architecture.entities.cliente import Cliente
-
 from src.clean_architecture.external.db.models.cliente_model import ClienteModel
+from src.clean_architecture.interfaces.gateways.cliente import ClienteGatewayInterface
+
 
 class ClienteGateway(ClienteGatewayInterface):
     def __init__(self, db: Session):

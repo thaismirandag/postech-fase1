@@ -1,0 +1,257 @@
+@startuml Arquitetura Completa - Sistema de Autoatendimento Fast Food - Fase 2
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+
+title Arquitetura Completa - Sistema de Autoatendimento Fast Food - Fase 2
+
+' Definição de cores
+skinparam rectangle {
+    BackgroundColor<<Cliente>> #FFEAA7
+    BackgroundColor<<Frontend>> #74B9FF
+    BackgroundColor<<API>> #FF6B6B
+    BackgroundColor<<Service>> #4ECDC4
+    BackgroundColor<<Database>> #96CEB4
+    BackgroundColor<<HPA>> #FD79A8
+    BackgroundColor<<ConfigMap>> #A29BFE
+    BackgroundColor<<Secret>> #D63031
+    BackgroundColor<<External>> #00B894
+    BackgroundColor<<Monitor>> #FDCB6E
+}
+
+' ===== PROBLEMA DE NEGÓCIO =====
+package "🎯 PROBLEMA DE NEGÓCIO" {
+    rectangle "Lanchonete em Expansão" as Lanchonete <<Cliente>>
+    note right of Lanchonete
+        **Problema Identificado:**
+        - Atendimento caótico sem sistema
+        - Pedidos perdidos ou mal interpretados
+        - Clientes insatisfeitos
+        - Perda de negócios
+        - **Problemas de performance** nos horários de pico
+        
+        **Solução:**
+        Sistema de autoatendimento
+        com controle completo e
+        infraestrutura escalável
+    end note
+}
+
+' ===== FRONTEND =====
+package "🖥️ FRONTEND" {
+    rectangle "Totem de Autoatendimento" as Totem <<Frontend>>
+    note right of Totem
+        **Interface do Cliente:**
+        - Seleção de produtos
+        - Identificação (CPF/Email)
+        - Montagem de combo
+        - Pagamento via QR Code
+        - Acompanhamento do pedido
+    end note
+    
+    rectangle "Monitor da Cozinha" as MonitorCozinha <<Monitor>>
+    note right of MonitorCozinha
+        **Painel da Cozinha:**
+        - Lista de pedidos em tempo real
+        - Status: Recebido > Em Preparação > Pronto
+        - Ordenação por prioridade
+        - Tempo de espera
+    end note
+    
+    rectangle "Painel Administrativo" as AdminPanel <<Frontend>>
+    note right of AdminPanel
+        **Gestão do Estabelecimento:**
+        - Gerenciar produtos/categorias
+        - Acompanhar pedidos
+        - Gestão de clientes
+        - Campanhas promocionais
+    end note
+}
+
+' ===== INFRAESTRUTURA KUBERNETES =====
+package "☸️ INFRAESTRUTURA KUBERNETES" {
+    package "Namespace: fastfood" {
+        
+        ' Ingress
+        rectangle "Ingress Controller" as Ingress <<API>>
+        note right of Ingress
+            **Nginx Ingress:**
+            - SSL/TLS Termination
+            - Load Balancing
+            - Path-based routing
+            - Rate limiting
+        end note
+        
+        ' Services
+        rectangle "fastfood-service" as Service <<Service>>
+        note right of Service
+            **Service:**
+            - Type: ClusterIP
+            - Port: 8000
+            - Load Balancer interno
+            - Health checks
+        end note
+        
+        ' Deployments
+        rectangle "fastfood-deployment" as Deployment <<API>>
+        note right of Deployment
+            **Deployment:**
+            - Replicas: 2-10 (HPA)
+            - Image: fastfood-api:latest
+            - Resources:
+              * CPU: 500m-1000m
+              * Memory: 512Mi-1Gi
+            - Health Checks:
+              * Liveness Probe
+              * Readiness Probe
+        end note
+        
+        ' HPA - SOLUÇÃO PARA PERFORMANCE
+        rectangle "fastfood-hpa" as HPA <<HPA>>
+        note right of HPA
+            **HPA - Solução para Performance:**
+            - Min Replicas: 2
+            - Max Replicas: 10
+            - Target CPU: 70%
+            - Target Memory: 80%
+            - Scale Up: 30s
+            - Scale Down: 300s
+            
+            **Resolve problemas de:**
+            - Picos de demanda
+            - Lentidão no atendimento
+            - Timeout de pedidos
+            - Performance do totem
+        end note
+        
+        ' ConfigMaps
+        rectangle "app-config" as ConfigMap <<ConfigMap>>
+        note right of ConfigMap
+            **ConfigMap:**
+            - DB_HOST, DB_PORT, DB_NAME
+            - LOG_LEVEL, API_VERSION
+            - MERCADOPAGO_PUBLIC_KEY
+            - Environment variables
+        end note
+        
+        ' Secrets
+        rectangle "db-secret" as Secret <<Secret>>
+        note right of Secret
+            **Secret:**
+            - DB_USER, DB_PASSWORD
+            - JWT_SECRET
+            - MERCADOPAGO_ACCESS_TOKEN
+            - Credenciais sensíveis
+        end note
+        
+        ' Database
+        rectangle "PostgreSQL" as Database <<Database>>
+        note right of Database
+            **Database:**
+            - Persistent Volume
+            - Backup automático
+            - Replicação
+            - Tabelas:
+              * clientes, produtos
+              * pedidos, pagamentos
+              * categorias
+        end note
+    }
+}
+
+' ===== SERVIÇOS EXTERNOS =====
+package "🌐 SERVIÇOS EXTERNOS" {
+    rectangle "Mercado Pago" as MercadoPago <<External>>
+    note right of MercadoPago
+        **Integração Real:**
+        - QR Code para pagamento
+        - Webhook para confirmação
+        - Consulta de status
+        - Processamento seguro
+    end note
+    
+    rectangle "Render (Alternativa)" as Render <<External>>
+    note right of Render
+        **Deploy Gratuito:**
+        - PostgreSQL gerenciado
+        - SSL automático
+        - Deploy automático
+        - Webhooks funcionam
+    end note
+}
+
+' ===== FLUXO DE DADOS =====
+package "🔄 FLUXO DE DADOS" {
+    rectangle "API FastAPI" as API <<API>>
+    note right of API
+        **Endpoints Públicos:**
+        - /v1/api/pedidos/ (criar)
+        - /v1/api/pedidos/checkout
+        - /v1/api/pedidos/{id} (status)
+        - /v1/api/produtos/ (listar)
+        - /v1/api/clientes/ (criar)
+        - /v1/api/pagamento/qrcode
+        - /v1/api/pagamento/{id}/status
+        - /v1/api/pagamento/webhook
+        
+        **Endpoints Admin:**
+        - /v1/api/admin/login
+        - /v1/api/admin/pedidos/ (gestão)
+        - /v1/api/admin/produtos/ (gestão)
+        - /v1/api/admin/clientes/ (gestão)
+    end note
+    
+    rectangle "Clean Architecture" as CleanArch <<API>>
+    note right of CleanArch
+        **Arquitetura Limpa:**
+        - Use Cases organizados
+        - Entidades de domínio
+        - Controllers
+        - Gateways
+    end note
+}
+
+' ===== RELACIONAMENTOS =====
+' Cliente -> Frontend
+Lanchonete --> Totem
+Lanchonete --> MonitorCozinha
+Lanchonete --> AdminPanel
+
+' Frontend -> API
+Totem --> Ingress
+MonitorCozinha --> Ingress
+AdminPanel --> Ingress
+
+' API -> Services
+Ingress --> Service
+Service --> Deployment
+Deployment --> API
+API --> CleanArch
+
+' Kubernetes Components
+Deployment --> HPA
+Deployment --> ConfigMap
+Deployment --> Secret
+Deployment --> Database
+
+' External Services
+API --> MercadoPago
+API --> Render
+
+' ===== LEGENDA =====
+legend right
+    |Cor|Componente|
+    |#FFEAA7|Cliente/Negócio|
+    |#74B9FF|Frontend|
+    |#FF6B6B|API/Ingress|
+    |#4ECDC4|Service|
+    |#96CEB4|Database|
+    |#FD79A8|HPA (Performance)|
+    |#A29BFE|ConfigMap|
+    |#D63031|Secret|
+    |#00B894|Serviços Externos|
+    |#FDCB6E|Monitor|
+endlegend
+
+@enduml 

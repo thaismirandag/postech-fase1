@@ -23,4 +23,4 @@ class PagamentoGatewayInterface(ABC):
 
     @abstractmethod
     def listar_por_status(self, status: str) -> list[Pagamento]:
-        pass 
+        pass

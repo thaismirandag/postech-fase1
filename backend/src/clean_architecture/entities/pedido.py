@@ -1,6 +1,5 @@
 from datetime import UTC, datetime
 from uuid import UUID, uuid4
-from typing import List
 
 from src.clean_architecture.entities.item_pedido import ItemPedido
 from src.clean_architecture.enums.status_pedido import StatusPedido
@@ -15,14 +14,16 @@ class Pedido:
         data_criacao: datetime | None = None,
         itens: list[ItemPedido] | None = None,
         observacoes: str | None = None,
+        cliente_nome: str | None = None,
     ):
         self.id = id
         self.cliente_id = cliente_id
+        self.cliente_nome = cliente_nome
         self.status = status
         self.data_criacao = data_criacao or datetime.now(UTC)
         self.itens = itens or []
         self.observacoes = observacoes
-        
+
         # Validações de domínio
         self._validar_pedido()
 
@@ -31,17 +32,17 @@ class Pedido:
         """Factory method para criar um novo pedido com validações"""
         if not itens:
             raise ValueError("Pedido deve ter pelo menos um item")
-        
+
         if len(itens) > 20:
             raise ValueError("Pedido não pode ter mais de 20 itens")
-        
+
         # Validar quantidade de cada item
         for item in itens:
             if item.quantidade <= 0:
-                raise ValueError(f"Quantidade do item deve ser maior que zero")
+                raise ValueError("Quantidade do item deve ser maior que zero")
             if item.quantidade > 50:
-                raise ValueError(f"Quantidade máxima por item é 50")
-        
+                raise ValueError("Quantidade máxima por item é 50")
+
         return cls(
             id=uuid4(),
             cliente_id=cliente_id,
@@ -55,26 +56,26 @@ class Pedido:
         """Adiciona um item ao pedido com validações"""
         if self.status in [StatusPedido.FINALIZADO, StatusPedido.PRONTO]:
             raise ValueError("Não é possível adicionar itens a um pedido finalizado ou pronto")
-        
+
         if len(self.itens) >= 20:
             raise ValueError("Pedido já possui o máximo de itens permitidos")
-        
+
         # Verificar se o item já existe e somar quantidades
         for item_existente in self.itens:
             if item_existente.produto_id == item.produto_id:
                 nova_quantidade = item_existente.quantidade + item.quantidade
                 if nova_quantidade > 50:
-                    raise ValueError(f"Quantidade total do produto não pode exceder 50")
+                    raise ValueError("Quantidade total do produto não pode exceder 50")
                 item_existente.quantidade = nova_quantidade
                 return
-        
+
         self.itens.append(item)
 
     def remover_item(self, produto_id: UUID) -> None:
         """Remove um item do pedido"""
         if self.status in [StatusPedido.FINALIZADO, StatusPedido.PRONTO]:
             raise ValueError("Não é possível remover itens de um pedido finalizado ou pronto")
-        
+
         self.itens = [item for item in self.itens if item.produto_id != produto_id]
 
     def atualizar_status(self, novo_status: StatusPedido) -> None:
@@ -86,16 +87,15 @@ class Pedido:
             StatusPedido.PRONTO: [StatusPedido.FINALIZADO],
             StatusPedido.FINALIZADO: []
         }
-        
+
         if novo_status not in transicoes_validas.get(self.status, []):
             raise ValueError(f"Transição de status inválida: {self.status} -> {novo_status}")
-        
+
         self.status = novo_status
 
     def calcular_total(self) -> float:
-        """Calcula o total do pedido"""
-        # Esta implementação seria expandida com os preços dos produtos
-        return sum(item.quantidade for item in self.itens) * 10.0  # Mock
+        """Calcula o total do pedido baseado nos preços dos produtos"""
+        return sum(item.calcular_subtotal() for item in self.itens)
 
     def pode_ser_cancelado(self) -> bool:
         """Verifica se o pedido pode ser cancelado"""
@@ -105,17 +105,17 @@ class Pedido:
         """Cancela o pedido"""
         if not self.pode_ser_cancelado():
             raise ValueError("Pedido não pode ser cancelado no status atual")
-        
+
         self.status = StatusPedido.FINALIZADO
 
     def _validar_pedido(self) -> None:
         """Validações internas do pedido"""
         if not self.itens:
             raise ValueError("Pedido deve ter pelo menos um item")
-        
+
         if len(self.itens) > 20:
             raise ValueError("Pedido não pode ter mais de 20 itens")
-        
+
         # Validar que não há produtos duplicados
         produtos_ids = [item.produto_id for item in self.itens]
         if len(produtos_ids) != len(set(produtos_ids)):

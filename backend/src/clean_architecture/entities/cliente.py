@@ -1,7 +1,6 @@
 import re
-from uuid import UUID, uuid4
 from datetime import UTC, datetime
-from typing import Optional
+from uuid import UUID, uuid4
 
 
 class Cliente:
@@ -9,8 +8,8 @@ class Cliente:
         self,
         id: UUID,
         nome: str,
-        email: Optional[str] = None,
-        cpf: Optional[str] = None,
+        email: str | None = None,
+        cpf: str | None = None,
         data_criacao: datetime | None = None,
         ativo: bool = True,
     ):
@@ -20,33 +19,33 @@ class Cliente:
         self.cpf = cpf
         self.data_criacao = data_criacao or datetime.now(UTC)
         self.ativo = ativo
-        
+
         # Validações de domínio
         self._validar_cliente()
 
     @classmethod
     def criar(
-        cls, 
-        nome: str, 
-        email: Optional[str] = None, 
-        cpf: Optional[str] = None
+        cls,
+        nome: str,
+        email: str | None = None,
+        cpf: str | None = None
     ) -> "Cliente":
         """Factory method para criar um novo cliente com validações"""
         if not nome or not nome.strip():
             raise ValueError("Nome é obrigatório")
-        
+
         if len(nome.strip()) < 2:
             raise ValueError("Nome deve ter pelo menos 2 caracteres")
-        
+
         if len(nome.strip()) > 100:
             raise ValueError("Nome não pode ter mais de 100 caracteres")
-        
+
         if email and not cls._validar_email(email):
             raise ValueError("Email inválido")
-        
+
         if cpf and not cls._validar_cpf(cpf):
             raise ValueError("CPF inválido")
-        
+
         return cls(
             id=uuid4(),
             nome=nome.strip(),
@@ -68,7 +67,7 @@ class Cliente:
             ativo=True,
         )
 
-    def atualizar_dados(self, nome: Optional[str] = None, email: Optional[str] = None) -> None:
+    def atualizar_dados(self, nome: str | None = None, email: str | None = None) -> None:
         """Atualiza os dados do cliente com validações"""
         if nome is not None:
             if not nome.strip():
@@ -78,7 +77,7 @@ class Cliente:
             if len(nome.strip()) > 100:
                 raise ValueError("Nome não pode ter mais de 100 caracteres")
             self.nome = nome.strip()
-        
+
         if email is not None:
             if email and not self._validar_email(email):
                 raise ValueError("Email inválido")
@@ -114,7 +113,7 @@ class Cliente:
         """Valida formato de email"""
         if not email:
             return False
-        
+
         pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return bool(re.match(pattern, email))
 
@@ -123,29 +122,29 @@ class Cliente:
         """Valida CPF usando algoritmo oficial"""
         # Remove caracteres não numéricos
         cpf_numeros = re.sub(r'[^0-9]', '', cpf)
-        
+
         # Verifica se tem 11 dígitos
         if len(cpf_numeros) != 11:
             return False
-        
+
         # Verifica se todos os dígitos são iguais
         if len(set(cpf_numeros)) == 1:
             return False
-        
+
         # Validação dos dígitos verificadores
         def calcular_digito(cpf_parcial: str) -> int:
             soma = sum(int(cpf_parcial[i]) * (10 - i) for i in range(len(cpf_parcial)))
             resto = soma % 11
             return 0 if resto < 2 else 11 - resto
-        
+
         # Primeiro dígito verificador
         if int(cpf_numeros[9]) != calcular_digito(cpf_numeros[:9]):
             return False
-        
+
         # Segundo dígito verificador
         if int(cpf_numeros[10]) != calcular_digito(cpf_numeros[:10]):
             return False
-        
+
         return True
 
     @staticmethod
@@ -158,10 +157,10 @@ class Cliente:
         """Validações internas do cliente"""
         if not self.nome or not self.nome.strip():
             raise ValueError("Nome é obrigatório")
-        
+
         if self.email and not self._validar_email(self.email):
             raise ValueError("Email inválido")
-        
+
         if self.cpf and not self._validar_cpf(self.cpf):
             raise ValueError("CPF inválido")
 

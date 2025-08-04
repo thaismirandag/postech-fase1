@@ -3,6 +3,7 @@ from uuid import UUID
 
 from src.clean_architecture.entities.fila_pedidos import FilaPedidos
 
+
 class FilaPedidosGatewayInterface(ABC):
     @abstractmethod
     def enfileirar(self, pedido_id: UUID, payload: str | None = None) -> None:

@@ -1,11 +1,12 @@
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import Column, DateTime, ForeignKey, String
+from sqlalchemy import Column, DateTime, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from src.clean_architecture.external.db.session import Base
+
 
 class PedidoModel(Base):
     __tablename__ = "tb_pedidos"
@@ -20,7 +21,9 @@ class PedidoModel(Base):
     cliente_id = Column(UUID(as_uuid=True), ForeignKey("tb_clientes.id"), nullable=False)
     status = Column(String, default="pendente", nullable=False)
     data_criacao = Column(DateTime, default=datetime.now(UTC))
+    observacoes = Column(Text, nullable=True)
     itens = relationship("ItemPedidoModel", back_populates="pedido")
     pagamento = relationship("PagamentoModel", back_populates="pedido", uselist=False)
+    cliente = relationship("ClienteModel", back_populates="pedidos")
 
 

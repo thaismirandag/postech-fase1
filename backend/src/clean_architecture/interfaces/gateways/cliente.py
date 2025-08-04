@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from src.clean_architecture.entities.cliente import Cliente
 
+
 class ClienteGatewayInterface(ABC):
     @abstractmethod
     def buscar_por_cpf(self, cpf: str) -> Cliente | None:

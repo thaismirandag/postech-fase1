@@ -1,6 +1,6 @@
 """adicionar_campos_mercadopago
 
-Revision ID: mercadopago_integration
+Revision ID: 8c6b783e25a3
 Revises: 6d0212687665
 Create Date: 2024-01-15 10:00:00.000000
 
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'mercadopago_integration'
+revision = '8c6b783e25a3'
 down_revision = '6d0212687665'
 branch_labels = None
 depends_on = None

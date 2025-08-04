@@ -1,6 +1,7 @@
 from src.clean_architecture.dtos.produto_dto import ProdutoResponse
 from src.clean_architecture.interfaces.gateways.produto import ProdutoGatewayInterface
 
+
 class BuscarProdutoUseCase:
     def __init__(self, produto_gateway: ProdutoGatewayInterface):
         self.produto_gateway = produto_gateway

@@ -1,9 +1,11 @@
 from uuid import UUID
+
 from fastapi import HTTPException
 
-from src.clean_architecture.interfaces.gateways.pedido import PedidoGatewayInterface
 from src.clean_architecture.dtos.pedido_dto import PedidoResponse
+from src.clean_architecture.interfaces.gateways.pedido import PedidoGatewayInterface
 from src.clean_architecture.use_cases.pedido.util import PedidoUtils
+
 
 class BuscarPedidoPorIDUseCase:
     def execute(self, pedido_id: UUID, pedido_gateway: PedidoGatewayInterface) -> PedidoResponse:

@@ -1,13 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+# Rotas administrativas (com autenticação)
 from src.clean_architecture.api.admin.auth import router as auth_router
-from src.clean_architecture.api.admin.cliente import router as cliente_router
-from src.clean_architecture.api.admin.pedido import router as pedido_router
-from src.clean_architecture.api.admin.produto import router as produto_router
-from src.clean_architecture.api.admin.pagamento import router as pagamento_router
+from src.clean_architecture.api.admin.cliente import router as admin_cliente_router
+from src.clean_architecture.api.admin.pedido import router as admin_pedido_router
+from src.clean_architecture.api.admin.produto import router as admin_produto_router
+from src.clean_architecture.api.public.cliente import router as public_cliente_router
+from src.clean_architecture.api.public.pagamento import (
+    router as public_pagamento_router,
+)
 
-from script.popular_tb_produtos import popular_produtos
+# Rotas públicas (sem autenticação)
+from src.clean_architecture.api.public.pedido import router as public_pedido_router
+from src.clean_architecture.api.public.produto import router as public_produto_router
 
 app = FastAPI(
     title="Postech Fast Food API",
@@ -29,9 +35,13 @@ def health_check():
     """Endpoint de health check para Kubernetes probes"""
     return {"status": "healthy", "version": "2.0.0"}
 
-# Todas as rotas unificadas (públicas e administrativas)
+app.include_router(public_pedido_router)
+app.include_router(public_produto_router)
+app.include_router(public_cliente_router)
+app.include_router(public_pagamento_router)
+
+
 app.include_router(auth_router)
-app.include_router(cliente_router)
-app.include_router(produto_router)
-app.include_router(pedido_router)
-app.include_router(pagamento_router)
+app.include_router(admin_cliente_router)
+app.include_router(admin_pedido_router)
+app.include_router(admin_produto_router)

@@ -3,10 +3,14 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+
 class ProdutoBase(BaseModel):
     nome: str
-    categoria: str
+    descricao: str
     preco: Decimal
+    categoria_id: UUID
+    imagem_url: str | None = None
+    estoque_disponivel: int = 0
 
 class ProdutoCreate(ProdutoBase):
     pass

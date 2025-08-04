@@ -2,8 +2,10 @@ import uuid
 
 from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from src.clean_architecture.external.db.session import Base
+
 
 class ClienteModel(Base):
     __tablename__ = "tb_clientes"
@@ -18,4 +20,5 @@ class ClienteModel(Base):
     nome = Column(String, nullable=True)
     cpf = Column(String, unique=True, nullable=True)
     email = Column(String, unique=True, nullable=True)
+    pedidos = relationship("PedidoModel", back_populates="cliente")
 

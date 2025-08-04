@@ -6,10 +6,11 @@ Este projeto é um sistema de autoatendimento desenvolvido para uma lanchonete, 
 
 - [📟 Sobre o Projeto](#-tech-challenge---sistema-de-autoatendimento-de-fast-food)
 - [🎯 Fases do Projeto](#-fases-do-projeto)
+- [🏗️ Arquitetura do Sistema](#️-arquitetura-do-sistema)
 - [⚙️ Tecnologias Utilizadas](#⚙️-tecnologias-utilizadas)
-- [🧹 Arquitetura Hexagonal](#-arquitetura-hexagonal)
 - [🚀 Como Executar o Projeto](#-como-executar-o-projeto)
-- [🔗 Endpoints Principais](#-endpoints-principais)
+- [🔗 Endpoints da API](#-endpoints-da-api)
+- [📋 Collection de APIs](#-collection-de-apis)
 - [📄 Estrutura do Projeto](#-estrutura-do-projeto)
 - [👥 Desenvolvedores](#-desenvolvedores)
 - [📽️ Demo](#-demo)
@@ -33,8 +34,54 @@ Evolução do sistema com funcionalidades avançadas:
 - ✅ **Webhook Pagamento**: Recebe confirmações do Mercado Pago
 - ✅ **Listagem Ordenada**: Pedidos ordenados por status e data
 - ✅ **Atualização de Status**: Com validações de transição
-- ✅ **Regras de Negócio Avançadas**: Valor mínimo/máximo, limites, horários
 - ✅ **Kubernetes**: Deploy completo com HPA, ConfigMaps, Secrets
+
+---
+
+## 🏗️ Arquitetura do Sistema
+
+### ☸️ Infraestrutura Kubernetes
+**Namespace: fastfood**
+
+#### **Ingress Controller**
+- **Nginx Ingress**: SSL/TLS Termination, Load Balancing, Path-based routing, Rate limiting
+- **SSL/TLS**: Certificados automáticos para segurança
+- **Rate Limiting**: Proteção contra ataques e sobrecarga
+
+#### **Service Layer**
+- **fastfood-service**: ClusterIP com health checks
+- **Load Balancer interno**: Distribuição de carga
+- **Health Checks**: Monitoramento de disponibilidade
+
+#### **Deployment**
+- **fastfood-deployment**: 2-10 réplicas com HPA automático
+- **Image**: fastfood-api:latest
+- **Resources**: CPU 500m-1000m, Memory 512Mi-1Gi
+- **Health Checks**: Liveness Probe, Readiness Probe
+
+#### **HPA - Solução para Performance** ⚡
+**Problema Resolvido**: Picos de demanda causando lentidão no atendimento
+- **Min Replicas**: 2 (disponibilidade mínima)
+- **Max Replicas**: 10 (escala automática)
+- **Target CPU**: 70% (escala baseada em CPU)
+- **Target Memory**: 80% (escala baseada em memória)
+- **Scale Up**: 30s (resposta rápida)
+- **Scale Down**: 300s (estabilidade)
+
+#### **Configuração**
+- **app-config**: ConfigMap com variáveis de ambiente
+- **db-secret**: Secret com credenciais sensíveis
+- **PostgreSQL**: Database com backup e replicação
+
+### 🌐 Serviços Externos
+- **Mercado Pago**: Integração real para QR Code e webhooks
+- **Render**: Alternativa gratuita para deploy
+
+### 🔄 Fluxo de Dados
+- **API FastAPI**: Endpoints públicos e administrativos
+- **Clean Architecture**: Use Cases, entidades, controllers e gateways
+
+![Arquitetura Completa](docs/fase2/arquitetura-completa-fase2.png)
 
 ---
 
@@ -44,26 +91,14 @@ Evolução do sistema com funcionalidades avançadas:
 - **Banco de Dados**: PostgreSQL
 - **Containerização**: Docker & Docker Compose
 - **Orquestração**: Kubernetes
-- **Pagamentos**: Mercado Pago SDK (Integração REAL)
+- **Pagamentos**: Mercado Pago SDK
 - **Validação**: Pydantic
 - **Autenticação**: JWT
+- **Gerenciamento de Dependências**: Poetry
 
 ---
 
-## 🧹 Arquitetura Hexagonal
-
-O projeto segue os princípios da arquitetura hexagonal (Ports & Adapters), organizando as responsabilidades por camadas:
-
-- `domain/`: Entidades e regras de negócio
-- `application/services/`: Orquestração da lógica de negócio
-- `ports/`: Interfaces de entrada e saída (contracts)
-- `adapters/input/`: Controllers (FastAPI)
-- `adapters/output/`: Repositórios e serviços externos
-- `infrastructure/db/`: Modelos ORM, sessão e configurações do banco
-
----
-
-## 🚀 Como executar o projeto
+## 🚀 Como Executar o Projeto
 
 ### 📦 Pré-requisitos
 - Docker
@@ -74,10 +109,15 @@ O projeto segue os princípios da arquitetura hexagonal (Ports & Adapters), orga
 1. **Clone o repositório:**
 ```bash
 git clone https://github.com/thaismirandag/postech-fiap.git
+cd postech-fiap
 ```
 
 2. **Configure as variáveis de ambiente:**
-Crie um arquivo `.env` na pasta `backend` com base no `env.example`.
+```bash
+cd backend
+cp env.example .env
+# Edite o arquivo .env com suas configurações
+```
 
 3. **Suba o ambiente com Docker Compose:**
 ```bash
@@ -93,13 +133,12 @@ docker-compose up --build
 docker-compose exec app poetry run alembic upgrade head
 ```
 
-6. **Gerar nova migração Alembic:**
+6. **Popular banco com produtos de exemplo:**
 ```bash
-docker-compose exec app poetry run alembic revision --autogenerate -m "mensagem de migração"
-docker-compose exec app poetry run alembic upgrade head
+docker-compose exec app python scripts/popular_tb_produtos.py
 ```
 
-7. **Executar Ruff (linter):**
+#### **Executar Linter**
 ```bash
 docker-compose exec app poetry run ruff check src/
 docker-compose exec app poetry run ruff check src/ --fix
@@ -137,33 +176,59 @@ kubectl get all -n fastfood
 
 ---
 
-## 🔗 Endpoints Principais
+## 🔗 Endpoints da API
 
-### 👤 Clientes
-- `POST /v1/api/admin/clientes/` – Criar ou obter cliente (identificado ou anônimo)
-- `GET /v1/api/admin/clientes/` – Listar todos os clientes (admin)
-- `GET /v1/api/admin/clientes/{cpf}` – Buscar cliente por cpf (admin)
+### 🌐 Rotas Públicas (Sem Autenticação)
 
-### 🍔 Produtos
-- `GET /v1/api/admin/produtos/` – Listar produtos disponíveis
-- `POST /v1/api/admin/produtos/` – Criar produto (admin)
-- `DELETE /v1/api/admin/produtos/{produto_id}` – Remover produto (admin)
+#### 👤 Clientes
+- `POST /v1/api/clientes/` – Criar ou obter cliente (identificado ou anônimo)
 
-### 🧾 Pedidos
-- `POST /v1/api/admin/pedidos/` – Cliente cria um pedido
-- `GET /v1/api/admin/pedidos/{pedido_id}` – Cliente acompanha status do pedido
-- `GET /v1/api/admin/pedidos/` – Listar todos os pedidos (admin)
-- `GET /v1/api/admin/pedidos/em-aberto` – Listar pedidos em aberto (admin)
-- `PATCH /v1/api/admin/pedidos/{pedido_id}/status` – Atualizar status do pedido (admin)
-- `DELETE /v1/api/admin/pedidos/{pedido_id}` – Deletar pedido (admin)
+#### 🍔 Produtos
+- `GET /v1/api/produtos/` – Listar produtos disponíveis
 
-### 💳 Pagamento
-- `GET /v1/api/admin/pagamento/qrcode` – Gerar QRCode real do Mercado Pago
+#### 🧾 Pedidos
+- `POST /v1/api/pedidos/` – Cliente cria um pedido
+- `POST /v1/api/pedidos/checkout` – Checkout de pedido com identificação
+- `GET /v1/api/pedidos/{pedido_id}` – Cliente acompanha status do pedido
 
-### 🚀 Fase 2 - Endpoints Avançados
-- `POST /v1/api/admin/pedidos/checkout` – Checkout de pedido com identificação
-- `GET /v1/api/admin/pagamento/{pedido_id}/status` – Consulta status de pagamento real
-- `POST /v1/api/admin/pagamento/webhook` – Webhook real para confirmação de pagamento
+#### 💳 Pagamento
+- `GET /v1/api/pagamento/qrcode` – Gerar QRCode real do Mercado Pago
+- `GET /v1/api/pagamento/{pedido_id}/status` – Consulta status de pagamento real
+- `POST /v1/api/pagamento/webhook` – Webhook real para confirmação de pagamento
+
+### 🔐 Rotas Administrativas (Com Autenticação)
+
+#### 🔑 Autenticação
+- `POST /v1/api/admin/login` – Login de administrador
+
+#### 👥 Gestão de Clientes
+- `GET /v1/api/admin/clientes/` – Listar todos os clientes
+- `GET /v1/api/admin/clientes/{cpf}` – Buscar cliente por CPF
+
+#### 🍔 Gestão de Produtos
+- `POST /v1/api/admin/produtos/` – Criar novo produto
+- `DELETE /v1/api/admin/produtos/{produto_id}` – Remover produto
+
+#### 🧾 Gestão de Pedidos
+- `GET /v1/api/admin/pedidos/` – Listar todos os pedidos (ordenados)
+- `GET /v1/api/admin/pedidos/em-aberto` – Listar pedidos em aberto
+- `PATCH /v1/api/admin/pedidos/{pedido_id}/status` – Atualizar status do pedido
+- `DELETE /v1/api/admin/pedidos/{pedido_id}` – Deletar pedido
+
+---
+
+## 📋 Collection de APIs
+
+### 🔗 Swagger/OpenAPI
+**Documentação Interativa:**
+- Local: http://localhost:8000/docs
+- Produção: https://fastfood-api.onrender.com/docs
+
+### 📥 Postman Collection
+**Download da Collection:**
+- [FastFood API Collection](docs/postman/api_collection.json)
+
+
 
 ---
 
@@ -177,6 +242,8 @@ postech-fiap/
 │   ├── src/
 │   │   ├── clean_architecture/  # Arquitetura limpa
 │   │   │   ├── api/            # Controllers da API
+│   │   │   │   ├── public/     # Rotas públicas
+│   │   │   │   └── admin/      # Rotas administrativas
 │   │   │   ├── controllers/    # Orquestradores
 │   │   │   ├── dtos/           # Data Transfer Objects
 │   │   │   ├── entities/       # Entidades de domínio
@@ -188,6 +255,7 @@ postech-fiap/
 │   │   ├── Dockerfile          # Dockerfile
 │   │   ├── env.example         # Variáveis de ambiente
 │   │   └── pyproject.toml      # Configuração do projeto
+│   └── k8s/                    # Configurações Kubernetes
 ├── docker-compose.yml           # Docker Compose
 ├── docs/                        # Documentação e diagramas
 └── README.md
@@ -203,55 +271,17 @@ postech-fiap/
 ## 📽️ Demo 
 - [Demostração do projeto](https://youtu.be/2qGpN0MsCpQ)
 
-## 📚 Documentação Adicional
 
-### Swagger/OpenAPI
-```
-http://localhost:8000/docs
-```
+## 📊 Diagramas
 
-### Documentação Completa da Fase 2
-```
-docs/fase2/README.md
-docs/fase2/mercadopago-integration.md
-```
-
-### Diagramas
-- `docs/arquitetura.png` - Diagrama de Arquitetura
+- `docs/arquitetura-completa-fase2.puml` - **Diagrama de Arquitetura Completa (Fase 2)**
 - `docs/fase2/event-storming-fase2.puml` - Event Storming detalhado
 - `docs/fase2/fluxos-alternativos.puml` - Cenários de erro
-- `docs/architecture.puml` - Arquitetura geral
-- **[Event Storming Fase 1 - Miro](https://miro.com/app/board/uXjVI2n2GlA=/)** - Diagrama interativo DDD
+- `docs/fase2/arquitetura-kubernetes.puml` - Arquitetura Kubernetes
 
 ---
 
-## 🎯 Status do Projeto
 
-**Fase 1 - COMPLETA** ✅  
-**Fase 2 - COMPLETA** ✅
-
-- [x] APIs conforme especificação
-- [x] Arquitetura Kubernetes
-- [x] Documentação completa
-- [x] Regras de negócio implementadas
-- [x] Validações avançadas
-- [x] Event Storming detalhado
-- [x] Fluxos alternativos mapeados
-- [x] **Integração REAL com Mercado Pago**
-
-## 🔮 Próximos Passos
-
-Para evolução futura:
-1. ✅ Integração real com Mercado Pago (IMPLEMENTADA)
-2. Implementação de filas de mensageria
-3. Métricas e monitoramento
-4. Testes de carga
-5. CI/CD pipeline
-
----
-
-**Desenvolvido para o Tech Challenge - Fases 1 e 2**  
-*Clean Architecture | DDD | Kubernetes | FastAPI | Mercado Pago*
 
 
 

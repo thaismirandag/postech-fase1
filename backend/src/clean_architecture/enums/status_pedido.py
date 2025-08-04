@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class StatusPedido(str, Enum):
     RECEBIDO = "Recebido"
     PAGO = "Pago"

@@ -1,9 +1,10 @@
 from uuid import UUID
 
-from src.clean_architecture.interfaces.gateways.pedido import PedidoGatewayInterface
 from src.clean_architecture.dtos.pedido_dto import PedidoResponse
-from src.clean_architecture.use_cases.pedido.util import PedidoUtils
 from src.clean_architecture.enums.status_pedido import StatusPedido
+from src.clean_architecture.interfaces.gateways.pedido import PedidoGatewayInterface
+from src.clean_architecture.use_cases.pedido.util import PedidoUtils
+
 
 class AtualizarStatusPedidoUseCase:
     def execute(self, pedido_id: UUID, novo_status: StatusPedido, pedido_gateway: PedidoGatewayInterface) -> PedidoResponse:

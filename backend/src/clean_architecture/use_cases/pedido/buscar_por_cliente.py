@@ -1,7 +1,9 @@
 from uuid import UUID
+
 from src.clean_architecture.dtos.pedido_dto import PedidoResponse
-from src.clean_architecture.use_cases.pedido.util import PedidoUtils
 from src.clean_architecture.interfaces.gateways.pedido import PedidoGatewayInterface
+from src.clean_architecture.use_cases.pedido.util import PedidoUtils
+
 
 class BuscarPedidoPorClienteUseCase:
     def __init__(self, pedido_gateway: PedidoGatewayInterface):

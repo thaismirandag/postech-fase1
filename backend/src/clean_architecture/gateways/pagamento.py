@@ -1,9 +1,13 @@
 from uuid import UUID
+
 from sqlalchemy.orm import Session
 
-from src.clean_architecture.interfaces.gateways.pagamento import PagamentoGatewayInterface
 from src.clean_architecture.entities.pagamento import Pagamento, StatusPagamento
 from src.clean_architecture.external.db.models.pagamento_model import PagamentoModel
+from src.clean_architecture.interfaces.gateways.pagamento import (
+    PagamentoGatewayInterface,
+)
+
 
 class PagamentoGateway(PagamentoGatewayInterface):
     def __init__(self, db: Session):
@@ -55,7 +59,7 @@ class PagamentoGateway(PagamentoGatewayInterface):
         pagamento_model = self.db.query(PagamentoModel).filter_by(id=pagamento_id).first()
         if not pagamento_model:
             raise ValueError("Pagamento não encontrado")
-        
+
         pagamento_model.status = status
         self.db.commit()
 
@@ -75,4 +79,4 @@ class PagamentoGateway(PagamentoGatewayInterface):
             data_criacao=model.data_criacao,
             data_processamento=model.data_confirmacao,
             valor=model.valor
-        ) 
+        )
