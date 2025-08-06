@@ -16,21 +16,25 @@ class GerarQRCodeUseCase:
         self.pagamento_gateway = pagamento_gateway
         self.mercadopago_service = MercadoPagoService()
 
-    def execute(self, pedido_id: UUID, valor: float) -> PagamentoResponse:
+    def execute(self, pedido_id: UUID) -> PagamentoResponse:
         """
-        Gera QR Code real do Mercado Pago para pagamento
+        Gera QR Code real do Mercado Pago para pagamento (valor calculado automaticamente)
         """
         # Buscar pedido
         pedido = self.pedido_gateway.buscar_por_id(pedido_id)
         if not pedido:
             raise ValueError("Pedido não encontrado")
 
+        # Calcular valor total do pedido automaticamente
+        valor_total = sum(item.produto_preco * item.quantidade for item in pedido.itens)
+        
         # Verificar se já existe pagamento para este pedido
         pagamento_existente = self.pagamento_gateway.buscar_por_pedido(pedido_id)
         if pagamento_existente:
             # Retornar QR Code existente se ainda válido
             if pagamento_existente.esta_pendente():
                 return PagamentoResponse(
+                    id=pagamento_existente.id,
                     status="ok",
                     qrcode_url=pagamento_existente.qrcode_url,
                     qrcode_id=pagamento_existente.qrcode_id
@@ -40,7 +44,7 @@ class GerarQRCodeUseCase:
         descricao = f"Pedido #{pedido_id} - Fast Food"
         qr_data = self.mercadopago_service.criar_pagamento_qr(
             str(pedido_id),
-            valor,
+            valor_total,
             descricao
         )
 
@@ -48,7 +52,7 @@ class GerarQRCodeUseCase:
         from src.clean_architecture.entities.pagamento import Pagamento
         pagamento = Pagamento.criar(
             pedido_id=pedido_id,
-            valor=valor,
+            valor=valor_total,
             qrcode_url=qr_data["qrcode_url"],
             qrcode_id=qr_data["preference_id"]
         )
@@ -57,6 +61,7 @@ class GerarQRCodeUseCase:
         pagamento = self.pagamento_gateway.salvar(pagamento)
 
         return PagamentoResponse(
+            id=pagamento.id,
             status="ok",
             qrcode_url=qr_data["qrcode_url"],
             qrcode_id=qr_data["preference_id"]

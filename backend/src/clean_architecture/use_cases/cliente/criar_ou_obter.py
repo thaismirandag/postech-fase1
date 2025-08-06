@@ -13,9 +13,6 @@ from src.clean_architecture.use_cases.cliente.buscar_por_email import (
 
 class CriarOuObterClienteUseCase:
     def execute(self, cliente_create: ClienteCreate, cliente_gateway: ClienteGateway) -> ClienteResponse:
-        # Validação avançada dos campos
-        if not cliente_create.nome or len(cliente_create.nome.strip()) < 2:
-            raise ValueError("Nome deve ter pelo menos 2 caracteres")
 
         if cliente_create.cpf:
             # Validação básica de CPF (em produção seria mais robusta)

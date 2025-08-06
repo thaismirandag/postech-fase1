@@ -88,7 +88,7 @@ export PRODUTO_ID="uuid_do_produto_criado"
 
 ### **PASSO 3: Gestão de Clientes**
 ```bash
-# 3.1 - Criar ou obter cliente
+# 3.1 - Criar 
 curl -X POST "http://localhost:8000/v1/api/admin/clientes/" \
   -H "Content-Type: application/json" \
   -d '{

@@ -69,9 +69,13 @@ GET /v1/api/admin/pedidos/
 ## Documentação Visual
 
 ### Diagramas Disponíveis
+- `arquitetura-completa-fase2.puml` - **Diagrama de Arquitetura Completa (Fase 2)**
 - `event-storming-fase2.puml` - Event Storming completo da Fase 2
 - `fluxos-alternativos.puml` - Fluxos alternativos e cenários de erro
 - `arquitetura-kubernetes.puml` - Arquitetura Kubernetes detalhada
+
+### Diagrama de Arquitetura Completa
+![Arquitetura Completa - Sistema de Autoatendimento Fast Food - Fase 2](Arquitetura%20Completa%20-%20Sistema%20de%20Autoatendimento%20Fast%20Food%20-%20Fase%202.png)
 
 ### Como Visualizar os Diagramas
 1. **VS Code**: Instale a extensão PlantUML e pressione `Alt+D`

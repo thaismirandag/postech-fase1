@@ -36,6 +36,11 @@ def listar_pedidos(db: Session = Depends(get_db)):
     """Lista todos os pedidos com ordenação para a cozinha"""
     return PedidoController.listar_pedidos(db)
 
+@router.get("/{pedido_id}", response_model=PedidoResponse, summary="Buscar pedido por ID", dependencies=[Depends(get_current_admin)])
+def buscar_pedido_por_id(pedido_id: UUID, db: Session = Depends(get_db)):
+    """Busca um pedido específico por ID"""
+    return PedidoController.buscar_por_id(pedido_id, db)
+
 @router.delete("/{pedido_id}", status_code=204, summary="Deletar pedido", dependencies=[Depends(get_current_admin)])
 def deletar_pedido(pedido_id: UUID, db: Session = Depends(get_db)):
     """Deleta um pedido (apenas admin)"""

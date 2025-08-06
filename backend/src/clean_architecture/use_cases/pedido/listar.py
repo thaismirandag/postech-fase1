@@ -17,12 +17,12 @@ class ListarPedidoUseCase:
         # Filtrar pedidos finalizados
         pedidos_ativos = [p for p in pedidos if p.status != StatusPedido.FINALIZADO]
 
-        # Definir prioridade de status para ordenação (menor número = maior prioridade)
+        # Conforme especificação: Pronto > Em Preparação > Recebido
         prioridade_status = {
-            StatusPedido.PRONTO: 1,
-            StatusPedido.PREPARANDO: 2,
-            StatusPedido.RECEBIDO: 3,
-            StatusPedido.PAGO: 4
+            StatusPedido.PRONTO: 1,        # Maior prioridade
+            StatusPedido.PREPARANDO: 2,    # Segunda prioridade
+            StatusPedido.RECEBIDO: 3,      # Terceira prioridade
+            StatusPedido.PAGO: 4           # Menor prioridade (já pago mas não processado)
         }
 
         # Ordenar por status (prioridade) e depois por data de criação (mais antigos primeiro)
