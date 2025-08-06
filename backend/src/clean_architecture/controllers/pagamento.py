@@ -14,14 +14,16 @@ logger = logging.getLogger(__name__)
 
 
 class PagamentoController:
-    def exibir_qrcode(self, pedido_id: UUID, db: Session):
+    @staticmethod
+    def exibir_qrcode(pedido_id: UUID, db: Session):
         """Gera QR Code real do Mercado Pago (valor calculado automaticamente)"""
         pedido_gateway = PedidoGateway(db)
         pagamento_gateway = PagamentoGateway(db)
         use_case = GerarQRCodeUseCase(pedido_gateway, pagamento_gateway)
         return use_case.execute(pedido_id)
 
-    def consultar_status_pagamento(self, pedido_id: UUID, db: Session):
+    @staticmethod
+    def consultar_status_pagamento(pedido_id: UUID, db: Session):
         """Consulta status de pagamento fake para demonstração"""
         try:
             # Status fake para demonstração
@@ -43,7 +45,8 @@ class PagamentoController:
                 "erro": str(e)
             }
 
-    def processar_webhook(self, webhook_data: dict, db: Session):
+    @staticmethod
+    def processar_webhook(webhook_data: dict, db: Session):
         """
         Processa webhook fake para demonstração
         """
@@ -65,8 +68,14 @@ class PagamentoController:
 
                 # Buscar pagamento pelo external_reference
                 external_ref = resultado["external_reference"]
-                if external_ref == "mock_pedido_id":
-                    # Em modo mock, buscar o pagamento mais recente ou usar um ID padrão
+                
+                # Verificar se é um UUID válido
+                try:
+                    pedido_uuid = UUID(external_ref)
+                    pagamento = pagamento_gateway.buscar_por_pedido(pedido_uuid)
+                except ValueError:
+                    # Se não for UUID válido, buscar o pagamento mais recente
+                    logger.warning(f"External reference inválido: {external_ref}. Buscando pagamento mais recente.")
                     pagamentos = pagamento_gateway.listar()
                     if pagamentos:
                         pagamento = pagamentos[0]  # Pegar o primeiro pagamento encontrado
@@ -75,36 +84,44 @@ class PagamentoController:
                             "status": "error",
                             "message": "Nenhum pagamento encontrado para processar"
                         }
-                else:
-                    pagamento = pagamento_gateway.buscar_por_pedido(UUID(external_ref))
                 
                 logger.info(f"PAGAMENTO ENCONTRADO: {pagamento is not None}")
 
                 if pagamento:
                     logger.info(f"STATUS DO PAGAMENTO: {resultado['status']}")
+                    logger.info(f"STATUS ATUAL DO PAGAMENTO NO BANCO: {pagamento.status}")
                     
-                    # Atualizar status do pagamento
+                    # Atualizar status do pagamento apenas se estiver pendente
                     if resultado["status"] == "approved":
-                        logger.info(f"PAGAMENTO APROVADO! Atualizando pedido...")
-                        
-                        pagamento.confirmar_pagamento(
-                            resultado["payment_id"],
-                            resultado["external_reference"],
-                            resultado.get("date_approved")
-                        )
-
-                        # Atualizar status do pedido para PAGO
-                        pedido = pedido_gateway.buscar_por_id(pagamento.pedido_id)
-                        if pedido:
-                            from src.clean_architecture.enums.status_pedido import (
-                                StatusPedido,
+                        if pagamento.status.value == "pendente":
+                            logger.info(f"PAGAMENTO APROVADO! Atualizando pagamento...")
+                            
+                            pagamento.confirmar_pagamento(
+                                resultado["payment_id"],
+                                resultado["external_reference"],
+                                resultado.get("date_approved")
                             )
-                            pedido.atualizar_status(StatusPedido.PAGO)
-                            pedido_gateway.salvar(pedido)
-                            logger.info(f"PEDIDO ATUALIZADO PARA PAGO: {pedido.id}")
 
-                    pagamento_gateway.salvar(pagamento)
-                    logger.info(f"PAGAMENTO SALVO NO BANCO")
+                            # Atualizar status do pedido para PAGO
+                            pedido = pedido_gateway.buscar_por_id(pagamento.pedido_id)
+                            if pedido:
+                                from src.clean_architecture.enums.status_pedido import (
+                                    StatusPedido,
+                                )
+                                pedido.atualizar_status(StatusPedido.PAGO)
+                                pedido_gateway.salvar(pedido)
+                                logger.info(f"PEDIDO ATUALIZADO PARA PAGO: {pedido.id}")
+
+                            pagamento_gateway.salvar(pagamento)
+                            logger.info(f"PAGAMENTO SALVO NO BANCO")
+                        else:
+                            logger.info(f"PAGAMENTO JÁ PROCESSADO - Status atual: {pagamento.status.value}")
+                            return {
+                                "status": "success",
+                                "message": f"Pagamento já foi processado anteriormente. Status atual: {pagamento.status.value}",
+                                "pedido_id": resultado["external_reference"],
+                                "payment_id": resultado["payment_id"]
+                            }
 
                 return {
                     "status": "success",

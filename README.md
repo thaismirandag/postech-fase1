@@ -271,7 +271,7 @@ postech-fiap/
 - Matheus Luchiari (@MathLuchiari)
 
 ## 📽️ Demo 
-- [Demostração do projeto](https://youtu.be/2qGpN0MsCpQ)
+- [Demostração do projeto](https://youtu.be/kw20YB7COYY)
 
 
 ## 📊 Diagramas

@@ -63,6 +63,10 @@ class PagamentoGateway(PagamentoGatewayInterface):
         pagamento_model.status = status
         self.db.commit()
 
+    def listar(self) -> list[Pagamento]:
+        pagamentos_model = self.db.query(PagamentoModel).all()
+        return [self._converter_para_entidade(p) for p in pagamentos_model]
+
     def listar_por_status(self, status: str) -> list[Pagamento]:
         pagamentos_model = self.db.query(PagamentoModel).filter_by(status=status).all()
         return [self._converter_para_entidade(p) for p in pagamentos_model]

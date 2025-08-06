@@ -170,7 +170,7 @@ class MercadoPagoService:
         try:
             # Simular processamento de webhook
             payment_id = webhook_data.get("data", {}).get("id", "123456789")
-            external_reference = webhook_data.get("data", {}).get("external_reference", "demo-pedido-id")
+            external_reference = webhook_data.get("data", {}).get("external_reference", "89b9b178-1b28-4020-9791-8817abd4cc82")
             status = webhook_data.get("data", {}).get("status", "approved")
             
             return {

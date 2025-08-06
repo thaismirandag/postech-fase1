@@ -14,10 +14,8 @@ class ListarPedidoUseCase:
         """
         pedidos = pedido_gateway.listar()
 
-        # Filtrar pedidos finalizados
         pedidos_ativos = [p for p in pedidos if p.status != StatusPedido.FINALIZADO]
 
-        # Conforme especificação: Pronto > Em Preparação > Recebido
         prioridade_status = {
             StatusPedido.PRONTO: 1,        # Maior prioridade
             StatusPedido.PREPARANDO: 2,    # Segunda prioridade
@@ -25,7 +23,6 @@ class ListarPedidoUseCase:
             StatusPedido.PAGO: 4           # Menor prioridade (já pago mas não processado)
         }
 
-        # Ordenar por status (prioridade) e depois por data de criação (mais antigos primeiro)
         pedidos_ordenados = sorted(
             pedidos_ativos,
             key=lambda p: (prioridade_status.get(p.status, 999), p.data_criacao)
