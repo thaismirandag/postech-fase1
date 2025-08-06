@@ -18,11 +18,13 @@ class CriarProdutoUseCase:
             raise ValueError("Preço não pode exceder R$ 1.000,00")
 
         # Criação do produto
-        produto = Produto(
-            id=uuid4(),
+        produto = Produto.criar(
             nome=produto_create.nome,
-            categoria=produto_create.categoria,
-            preco=produto_create.preco
+            descricao=produto_create.descricao,
+            preco=produto_create.preco,
+            categoria_id=produto_create.categoria_id,
+            imagem_url=produto_create.imagem_url,
+            estoque_disponivel=produto_create.estoque_disponivel
         )
         produto_gateway.salvar(produto)
         return ProdutoResponse(**produto.__dict__)

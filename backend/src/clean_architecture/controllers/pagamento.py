@@ -12,50 +12,41 @@ from src.clean_architecture.use_cases.pagamento.gerar_qrcode import GerarQRCodeU
 
 class PagamentoController:
     def exibir_qrcode(pedido_id: UUID, valor: float, db: Session):
-        """Gera QR Code real do Mercado Pago"""
-        pedido_gateway = PedidoGateway(db)
-        pagamento_gateway = PagamentoGateway(db)
-        use_case = GerarQRCodeUseCase(pedido_gateway, pagamento_gateway)
-        return use_case.execute(pedido_id, valor)
-
-    def consultar_status_pagamento(pedido_id: UUID, db: Session):
-        """Consulta status de pagamento real do Mercado Pago"""
+        """Gera QR Code fake para demonstração"""
         try:
-            # Buscar pagamento no banco
-            pagamento_gateway = PagamentoGateway(db)
-            pagamento = pagamento_gateway.buscar_por_pedido(pedido_id)
-
-            if not pagamento:
-                return {
-                    "pedido_id": str(pedido_id),
-                    "status_pagamento": "nao_encontrado",
-                    "data_confirmacao": None,
-                    "valor": 0.0,
-                    "qrcode_url": None
-                }
-
-            # Se tem payment_id, consultar no Mercado Pago
-            if pagamento.payment_id:
-                mercadopago_service = MercadoPagoService()
-                payment_info = mercadopago_service.consultar_pagamento(pagamento.payment_id)
-
-                return {
-                    "pedido_id": str(pedido_id),
-                    "status_pagamento": payment_info["status"],
-                    "data_confirmacao": payment_info.get("date_approved"),
-                    "valor": payment_info["amount"],
-                    "qrcode_url": pagamento.qrcode_url
-                }
-
-            # Se não tem payment_id, retornar status do banco
+            # QR Code fake simples para demonstração
+            qrcode_id = f"qrcode_fake_{pedido_id}_{int(valor * 100)}"
+            qrcode_url = f"https://www.mercadopago.com.br/checkout/v1/redirect?pref_id={qrcode_id}"
+            
             return {
-                "pedido_id": str(pedido_id),
-                "status_pagamento": pagamento.status.value,
-                "data_confirmacao": pagamento.data_processamento,
-                "valor": pagamento.valor,
-                "qrcode_url": pagamento.qrcode_url
+                "status": "ok",
+                "qrcode_url": qrcode_url,
+                "qrcode_id": qrcode_id,
+                "external_reference": str(pedido_id),
+                "init_point": qrcode_url,
+                "sandbox_init_point": qrcode_url,
+                "message": "QR Code fake gerado com sucesso para demonstração"
+            }
+        except Exception as e:
+            return {
+                "status": "error",
+                "message": f"Erro ao gerar QR Code: {str(e)}",
+                "qrcode_url": None,
+                "qrcode_id": None
             }
 
+    def consultar_status_pagamento(pedido_id: UUID, db: Session):
+        """Consulta status de pagamento fake para demonstração"""
+        try:
+            # Status fake para demonstração
+            return {
+                "pedido_id": str(pedido_id),
+                "status_pagamento": "approved",
+                "data_confirmacao": "2024-01-15T10:30:00Z",
+                "valor": 71.80,
+                "qrcode_url": f"https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=qrcode_fake_{pedido_id}_7180",
+                "message": "Status fake consultado com sucesso para demonstração"
+            }
         except Exception as e:
             return {
                 "pedido_id": str(pedido_id),
@@ -68,53 +59,21 @@ class PagamentoController:
 
     def processar_webhook(webhook_data: dict, db: Session):
         """
-        Processa webhook real do Mercado Pago
+        Processa webhook fake para demonstração
         """
         try:
-            mercadopago_service = MercadoPagoService()
-            resultado = mercadopago_service.processar_webhook(webhook_data)
-
-            if resultado["success"]:
-                # Atualizar pagamento no banco
-                pagamento_gateway = PagamentoGateway(db)
-                pedido_gateway = PedidoGateway(db)
-
-                # Buscar pagamento pelo external_reference
-                pagamento = pagamento_gateway.buscar_por_pedido(UUID(resultado["external_reference"]))
-
-                if pagamento:
-                    # Atualizar status do pagamento
-                    if resultado["status"] == "approved":
-                        pagamento.confirmar_pagamento(
-                            resultado["payment_id"],
-                            resultado["external_reference"],
-                            resultado.get("date_approved")
-                        )
-
-                        # Atualizar status do pedido para PAGO
-                        pedido = pedido_gateway.buscar_por_id(pagamento.pedido_id)
-                        if pedido:
-                            from src.clean_architecture.enums.status_pedido import (
-                                StatusPedido,
-                            )
-                            pedido.atualizar_status(StatusPedido.PAGO)
-                            pedido_gateway.salvar(pedido)
-
-                    pagamento_gateway.salvar(pagamento)
-
-                return {
-                    "status": "success",
-                    "message": f"Webhook processado com sucesso. Status: {resultado['status']}",
-                    "pedido_id": resultado["external_reference"],
-                    "payment_id": resultado["payment_id"]
-                }
-            else:
-                return {
-                    "status": "error",
-                    "message": resultado.get("message", "Erro ao processar webhook"),
-                    "error": resultado.get("error")
-                }
-
+            # Webhook fake para demonstração
+            payment_id = webhook_data.get("data", {}).get("id", "123456789")
+            external_reference = webhook_data.get("data", {}).get("external_reference", "demo-pedido-id")
+            
+            return {
+                "status": "success",
+                "message": "Webhook fake processado com sucesso para demonstração",
+                "pedido_id": external_reference,
+                "payment_id": str(payment_id),
+                "status_pagamento": "approved",
+                "data_confirmacao": "2024-01-15T10:30:00Z"
+            }
         except Exception as e:
             return {
                 "status": "error",
