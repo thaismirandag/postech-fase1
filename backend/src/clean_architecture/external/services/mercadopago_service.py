@@ -94,7 +94,12 @@ class MercadoPagoService:
                 "preference_id": preference_id,
                 "qrcode_url": qrcode_url,
                 "qrcode_base64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+                "preference_id": preference_id,
+                "qrcode_url": qrcode_url,
+                "qrcode_base64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
                 "external_reference": pedido_id,
+                "init_point": qrcode_url,
+                "sandbox_init_point": qrcode_url
                 "init_point": qrcode_url,
                 "sandbox_init_point": qrcode_url
             }
@@ -141,6 +146,16 @@ class MercadoPagoService:
                 "date_created": datetime.now(UTC).isoformat(),
                 "date_approved": datetime.now(UTC).isoformat(),
                 "date_last_updated": datetime.now(UTC).isoformat()
+                "payment_id": payment_id,
+                "status": "approved",
+                "status_detail": "accredited",
+                "external_reference": "demo-pedido-id",
+                "amount": 71.80,
+                "currency": "BRL",
+                "payment_method": "credit_card",
+                "date_created": datetime.now(UTC).isoformat(),
+                "date_approved": datetime.now(UTC).isoformat(),
+                "date_last_updated": datetime.now(UTC).isoformat()
             }
 
         except Exception as e:
@@ -149,6 +164,7 @@ class MercadoPagoService:
     def processar_webhook(self, webhook_data: dict[str, Any]) -> dict[str, Any]:
         """
         Processa webhook mockado para demonstração
+        Processa webhook mockado para demonstração
         """
         try:
             # Simular processamento de webhook
@@ -156,7 +172,19 @@ class MercadoPagoService:
             external_reference = webhook_data.get("data", {}).get("external_reference", "demo-pedido-id")
             status = webhook_data.get("data", {}).get("status", "approved")
             
+            # Simular processamento de webhook
+            payment_id = webhook_data.get("data", {}).get("id", "123456789")
+            external_reference = webhook_data.get("data", {}).get("external_reference", "demo-pedido-id")
+            status = webhook_data.get("data", {}).get("status", "approved")
+            
             return {
+                "success": True,
+                "payment_id": str(payment_id),
+                "external_reference": external_reference,
+                "status": status,
+                "status_detail": "accredited",
+                "amount": 71.80,
+                "date_approved": datetime.now(UTC).isoformat()
                 "success": True,
                 "payment_id": str(payment_id),
                 "external_reference": external_reference,

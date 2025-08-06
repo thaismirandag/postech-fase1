@@ -25,8 +25,16 @@ class PagamentoController:
         """Consulta status de pagamento fake para demonstração"""
         try:
             # Status fake para demonstração
+        """Consulta status de pagamento fake para demonstração"""
+        try:
+            # Status fake para demonstração
             return {
                 "pedido_id": str(pedido_id),
+                "status_pagamento": "approved",
+                "data_confirmacao": "2024-01-15T10:30:00Z",
+                "valor": 71.80,
+                "qrcode_url": f"https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=qrcode_fake_{pedido_id}_7180",
+                "message": "Status fake consultado com sucesso para demonstração"
                 "status_pagamento": "approved",
                 "data_confirmacao": "2024-01-15T10:30:00Z",
                 "valor": 71.80,
@@ -45,6 +53,7 @@ class PagamentoController:
 
     def processar_webhook(webhook_data: dict, db: Session):
         """
+        Processa webhook fake para demonstração
         Processa webhook fake para demonstração
         """
         
