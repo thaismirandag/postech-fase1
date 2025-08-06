@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# 🎥 Script para Gravação de Vídeo - Fase 2
-# Sistema de Autoatendimento Fast Food
-# 
-# IMPORTANTE: Este script deve ser executado a partir da pasta backend/
-# O docker-compose.yml está na raiz do projeto
-# O arquivo .env deve estar na pasta backend/
-
 set -e  # Parar em caso de erro
 
 echo "🎬 Iniciando demonstração da Fase 2..."
