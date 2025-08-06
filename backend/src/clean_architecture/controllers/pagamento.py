@@ -46,7 +46,6 @@ class PagamentoController:
     def processar_webhook(self, webhook_data: dict, db: Session):
         """
         Processa webhook fake para demonstração
-        Processa webhook fake para demonstração
         """
         
         logger.info(f"WEBHOOK RECEBIDO: {webhook_data}")

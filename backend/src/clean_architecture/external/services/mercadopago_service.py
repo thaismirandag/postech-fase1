@@ -2,6 +2,7 @@ import os
 from datetime import UTC, datetime, timedelta
 from typing import Any
 import uuid
+import uuid
 import mercadopago
 
 
@@ -123,6 +124,21 @@ class MercadoPagoService:
                 "date_last_updated": datetime.now(UTC).isoformat()
             }
         
+        if self.is_mock_mode:
+            # Modo mock para desenvolvimento
+            return {
+                "payment_id": payment_id,
+                "status": "approved",  # Simular pagamento aprovado
+                "status_detail": "accredited",
+                "external_reference": "89b9b178-1b28-4020-9791-8817abd4cc82",  # UUID válido do pedido existente
+                "amount": 10.0,
+                "currency": "BRL",
+                "payment_method": "credit_card",
+                "date_created": datetime.now(UTC).isoformat(),
+                "date_approved": datetime.now(UTC).isoformat(),
+                "date_last_updated": datetime.now(UTC).isoformat()
+            }
+        
         try:
             payment_response = self.sdk.payment().get(payment_id)
 
@@ -149,7 +165,6 @@ class MercadoPagoService:
 
     def processar_webhook(self, webhook_data: dict[str, Any]) -> dict[str, Any]:
         """
-        Processa webhook mockado para demonstração
         Processa webhook mockado para demonstração
         """
         try:

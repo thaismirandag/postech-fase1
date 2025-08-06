@@ -82,6 +82,7 @@ Evolução do sistema com funcionalidades avançadas:
 - **Clean Architecture**: Use Cases, entidades, controllers e gateways
 
 ![Arquitetura Completa](docs/fase2/Arquitetura%20Completa%20-%20Sistema%20de%20Autoatendimento%20Fast%20Food%20-%20Fase%202.png)
+![Arquitetura Completa](docs/fase2/Arquitetura%20Completa%20-%20Sistema%20de%20Autoatendimento%20Fast%20Food%20-%20Fase%202.png)
 
 ---
 
@@ -182,15 +183,20 @@ kubectl get all -n fastfood
 
 #### 👤 Clientes
 - `POST /v1/api/clientes/` – Criar cliente (identificado ou anônimo)
+- `POST /v1/api/clientes/` – Criar cliente (identificado ou anônimo)
 
 #### 🍔 Produtos
 - `GET /v1/api/produtos/` – Listar produtos disponíveis
 
 #### 🧾 Pedidos
 - `POST /v1/api/pedidos/` – Criar pedido (cliente pode ser anônimo)
+- `POST /v1/api/pedidos/` – Criar pedido (cliente pode ser anônimo)
 - `GET /v1/api/pedidos/{pedido_id}` – Cliente acompanha status do pedido
 
 #### 💳 Pagamento
+- `GET /v1/api/pagamentos/{pedido_id}/qrcode` – Gerar QR Code para pagamento (valor automático)
+- `GET /v1/api/pagamentos/{pedido_id}/status` – Consultar status do pagamento
+- `POST /v1/api/pagamentos/webhook` – Webhook para confirmação de pagamento
 - `GET /v1/api/pagamentos/{pedido_id}/qrcode` – Gerar QR Code para pagamento (valor automático)
 - `GET /v1/api/pagamentos/{pedido_id}/status` – Consultar status do pagamento
 - `POST /v1/api/pagamentos/webhook` – Webhook para confirmação de pagamento
@@ -271,6 +277,7 @@ postech-fiap/
 ## 📊 Diagramas
 
 - `docs/arquitetura-completa-fase2.puml` - **Diagrama de Arquitetura Completa (Fase 2)**
+- `docs/fase2/Arquitetura Completa - Sistema de Autoatendimento Fast Food - Fase 2.png` - **Diagrama de Arquitetura Completa (Fase 2)**
 - `docs/fase2/event-storming-fase2.puml` - Event Storming detalhado
 - `docs/fase2/fluxos-alternativos.puml` - Cenários de erro
 - `docs/fase2/arquitetura-kubernetes.puml` - Arquitetura Kubernetes
