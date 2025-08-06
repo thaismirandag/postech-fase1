@@ -277,7 +277,6 @@ postech-fiap/
 ## 📊 Diagramas
 
 - `docs/arquitetura-completa-fase2.puml` - **Diagrama de Arquitetura Completa (Fase 2)**
-- `docs/fase2/Arquitetura Completa - Sistema de Autoatendimento Fast Food - Fase 2.png` - **Diagrama de Arquitetura Completa (Fase 2)**
 - `docs/fase2/event-storming-fase2.puml` - Event Storming detalhado
 - `docs/fase2/fluxos-alternativos.puml` - Cenários de erro
 - `docs/fase2/arquitetura-kubernetes.puml` - Arquitetura Kubernetes
