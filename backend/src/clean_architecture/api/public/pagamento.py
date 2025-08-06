@@ -1,34 +1,26 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from src.clean_architecture.controllers.pagamento import PagamentoController
-from src.clean_architecture.dtos.pedido_dto import StatusPagamentoResponse
+from src.clean_architecture.dtos.pagamento_dto import WebhookData
 from src.clean_architecture.external.db.session import get_db
 
-router = APIRouter(prefix="/v1/api/pagamento", tags=["Pagamento - Público"])
+router = APIRouter(prefix="/v1/api/pagamentos", tags=["Pagamentos"])
 
-@router.get("/qrcode", summary="Gerar QRCode real do Mercado Pago")
-def exibir_qrcode(
-    pedido_id: UUID = Query(..., description="ID do pedido"),
-    valor: float = Query(..., description="Valor do pedido", gt=0)
-):
-    """Gera QR Code real do Mercado Pago para pagamento"""
-    try:
-        return PagamentoController.exibir_qrcode(pedido_id, valor, get_db())
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
 
-@router.get("/{pedido_id}/status", response_model=StatusPagamentoResponse, summary="Consultar status de pagamento real")
-def consultar_status_pagamento(pedido_id: UUID, db: Session = Depends(get_db)):
-    """Consulta status de pagamento real do Mercado Pago"""
+@router.get("/{pedido_id}/qrcode", summary="Gerar QR Code para pagamento")
+def gerar_qrcode(pedido_id: UUID, db: Session = Depends(get_db)):
+    """Endpoint para gerar QR Code de pagamento (valor calculado automaticamente)"""
+    return PagamentoController.exibir_qrcode(pedido_id, db)
+
+@router.get("/{pedido_id}/status", summary="Consultar status do pagamento")
+def consultar_status(pedido_id: UUID, db: Session = Depends(get_db)):
+    """Endpoint para consultar status do pagamento"""
     return PagamentoController.consultar_status_pagamento(pedido_id, db)
 
 @router.post("/webhook", summary="Webhook real para confirmação de pagamento")
-def webhook_pagamento(webhook_data: dict, db: Session = Depends(get_db)):
-    """
-    Webhook real para receber confirmação de pagamento do Mercado Pago
-    Implementação real conforme especificação
-    """
-    return PagamentoController.processar_webhook(webhook_data, db)
+def webhook_pagamento(webhook_data: WebhookData, db: Session = Depends(get_db)):
+    """Webhook real para receber confirmação de pagamento do Mercado Pago"""
+    return PagamentoController.processar_webhook(webhook_data.dict(), db)

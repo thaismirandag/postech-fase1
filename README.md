@@ -81,7 +81,7 @@ Evolução do sistema com funcionalidades avançadas:
 - **API FastAPI**: Endpoints públicos e administrativos
 - **Clean Architecture**: Use Cases, entidades, controllers e gateways
 
-![Arquitetura Completa](docs/fase2/arquitetura-completa-fase2.png)
+![Arquitetura Completa](docs/fase2/Arquitetura%20Completa%20-%20Sistema%20de%20Autoatendimento%20Fast%20Food%20-%20Fase%202.png)
 
 ---
 
@@ -181,20 +181,19 @@ kubectl get all -n fastfood
 ### 🌐 Rotas Públicas (Sem Autenticação)
 
 #### 👤 Clientes
-- `POST /v1/api/clientes/` – Criar ou obter cliente (identificado ou anônimo)
+- `POST /v1/api/clientes/` – Criar cliente (identificado ou anônimo)
 
 #### 🍔 Produtos
 - `GET /v1/api/produtos/` – Listar produtos disponíveis
 
 #### 🧾 Pedidos
-- `POST /v1/api/pedidos/` – Cliente cria um pedido
-- `POST /v1/api/pedidos/checkout` – Checkout de pedido com identificação
+- `POST /v1/api/pedidos/` – Criar pedido (cliente pode ser anônimo)
 - `GET /v1/api/pedidos/{pedido_id}` – Cliente acompanha status do pedido
 
 #### 💳 Pagamento
-- `GET /v1/api/pagamento/qrcode` – Gerar QRCode real do Mercado Pago
-- `GET /v1/api/pagamento/{pedido_id}/status` – Consulta status de pagamento real
-- `POST /v1/api/pagamento/webhook` – Webhook real para confirmação de pagamento
+- `GET /v1/api/pagamentos/{pedido_id}/qrcode` – Gerar QR Code para pagamento (valor automático)
+- `GET /v1/api/pagamentos/{pedido_id}/status` – Consultar status do pagamento
+- `POST /v1/api/pagamentos/webhook` – Webhook para confirmação de pagamento
 
 ### 🔐 Rotas Administrativas (Com Autenticação)
 
@@ -225,10 +224,7 @@ kubectl get all -n fastfood
 - Produção: https://fastfood-api.onrender.com/docs
 
 ### 📥 Postman Collection
-**Download da Collection:**
-- [FastFood API Collection](docs/postman/api_collection.json)
-
-
+- `docs/postman/api_collection.json` - Todas as APIS para ser usada no postman
 
 ---
 

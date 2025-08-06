@@ -21,8 +21,9 @@ class ItemPedidoResponseDTO(BaseModel):
 
 
 class PedidoCreate(BaseModel):
-    cliente_id: UUID
+    cliente_id: UUID | None = None  # Cliente pode ser anônimo
     itens: list[ItemPedidoDTO]
+    observacoes: str | None = None
 
 
 class CheckoutPedidoRequest(BaseModel):
@@ -35,7 +36,7 @@ class CheckoutPedidoRequest(BaseModel):
 class PedidoResponse(BaseModel):
     """DTO para resposta de pedido com descrições completas"""
     id: UUID
-    cliente_id: UUID
+    cliente_id: UUID | None = None  # Cliente pode ser anônimo
     cliente_nome: str | None = None
     status: StatusPedido
     data_criacao: datetime

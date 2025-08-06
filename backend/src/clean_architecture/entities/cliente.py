@@ -7,7 +7,7 @@ class Cliente:
     def __init__(
         self,
         id: UUID,
-        nome: str,
+        nome: str | None = None,
         email: str | None = None,
         cpf: str | None = None,
         data_criacao: datetime | None = None,
@@ -26,19 +26,17 @@ class Cliente:
     @classmethod
     def criar(
         cls,
-        nome: str,
+        nome: str | None = None,
         email: str | None = None,
         cpf: str | None = None
     ) -> "Cliente":
         """Factory method para criar um novo cliente com validações"""
-        if not nome or not nome.strip():
-            raise ValueError("Nome é obrigatório")
-
-        if len(nome.strip()) < 2:
-            raise ValueError("Nome deve ter pelo menos 2 caracteres")
-
-        if len(nome.strip()) > 100:
-            raise ValueError("Nome não pode ter mais de 100 caracteres")
+        if nome and nome.strip():
+            if len(nome.strip()) < 2:
+                raise ValueError("Nome deve ter pelo menos 2 caracteres")
+            if len(nome.strip()) > 100:
+                raise ValueError("Nome não pode ter mais de 100 caracteres")
+            nome = nome.strip()
 
         if email and not cls._validar_email(email):
             raise ValueError("Email inválido")
@@ -48,7 +46,7 @@ class Cliente:
 
         return cls(
             id=uuid4(),
-            nome=nome.strip(),
+            nome=nome,
             email=email.strip() if email else None,
             cpf=cls._formatar_cpf(cpf) if cpf else None,
             data_criacao=datetime.now(UTC),
@@ -155,9 +153,6 @@ class Cliente:
 
     def _validar_cliente(self) -> None:
         """Validações internas do cliente"""
-        if not self.nome or not self.nome.strip():
-            raise ValueError("Nome é obrigatório")
-
         if self.email and not self._validar_email(self.email):
             raise ValueError("Email inválido")
 

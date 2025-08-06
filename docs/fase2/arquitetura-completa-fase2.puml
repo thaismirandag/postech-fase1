@@ -71,7 +71,7 @@ package "🖥️ FRONTEND" {
 
 ' ===== INFRAESTRUTURA KUBERNETES =====
 package "☸️ INFRAESTRUTURA KUBERNETES" {
-    package "Namespace: fastfood" {
+    package "Namespace: postech-fase2" {
         
         ' Ingress
         rectangle "Ingress Controller" as Ingress <<API>>
@@ -84,7 +84,7 @@ package "☸️ INFRAESTRUTURA KUBERNETES" {
         end note
         
         ' Services
-        rectangle "fastfood-service" as Service <<Service>>
+        rectangle "postech-app-service" as Service <<Service>>
         note right of Service
             **Service:**
             - Type: ClusterIP
@@ -94,11 +94,11 @@ package "☸️ INFRAESTRUTURA KUBERNETES" {
         end note
         
         ' Deployments
-        rectangle "fastfood-deployment" as Deployment <<API>>
+        rectangle "postech-app-deployment" as Deployment <<API>>
         note right of Deployment
             **Deployment:**
             - Replicas: 2-10 (HPA)
-            - Image: fastfood-api:latest
+            - Image: postech-app:latest
             - Resources:
               * CPU: 500m-1000m
               * Memory: 512Mi-1Gi
@@ -108,7 +108,7 @@ package "☸️ INFRAESTRUTURA KUBERNETES" {
         end note
         
         ' HPA - SOLUÇÃO PARA PERFORMANCE
-        rectangle "fastfood-hpa" as HPA <<HPA>>
+        rectangle "postech-app-hpa" as HPA <<HPA>>
         note right of HPA
             **HPA - Solução para Performance:**
             - Min Replicas: 2
@@ -126,7 +126,7 @@ package "☸️ INFRAESTRUTURA KUBERNETES" {
         end note
         
         ' ConfigMaps
-        rectangle "app-config" as ConfigMap <<ConfigMap>>
+        rectangle "postech-app-config" as ConfigMap <<ConfigMap>>
         note right of ConfigMap
             **ConfigMap:**
             - DB_HOST, DB_PORT, DB_NAME
@@ -136,7 +136,7 @@ package "☸️ INFRAESTRUTURA KUBERNETES" {
         end note
         
         ' Secrets
-        rectangle "db-secret" as Secret <<Secret>>
+        rectangle "postech-app-secret" as Secret <<Secret>>
         note right of Secret
             **Secret:**
             - DB_USER, DB_PASSWORD
@@ -146,7 +146,7 @@ package "☸️ INFRAESTRUTURA KUBERNETES" {
         end note
         
         ' Database
-        rectangle "PostgreSQL" as Database <<Database>>
+        rectangle "postgres-deployment" as Database <<Database>>
         note right of Database
             **Database:**
             - Persistent Volume
