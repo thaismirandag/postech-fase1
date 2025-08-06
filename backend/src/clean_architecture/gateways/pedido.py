@@ -53,12 +53,7 @@ class PedidoGateway(PedidoGatewayInterface):
         return [self._converter_para_entidade(p) for p in pedidos_model]
 
     def buscar_por_id(self, pedido_id: UUID) -> Pedido | None:
-        model = (
-            self.db.query(PedidoModel)
-            .join(ClienteModel, PedidoModel.cliente_id == ClienteModel.id)
-            .filter_by(id=pedido_id)
-            .first()
-        )
+        model = self.db.query(PedidoModel).filter_by(id=pedido_id).first()
         if model:
             return self._converter_para_entidade(model)
         return None
@@ -82,7 +77,7 @@ class PedidoGateway(PedidoGatewayInterface):
         itens_com_produtos = (
             self.db.query(ItemPedidoModel, ProdutoModel)
             .join(ProdutoModel, ItemPedidoModel.produto_id == ProdutoModel.id)
-            .filter_by(pedido_id=model.id)
+            .filter(ItemPedidoModel.pedido_id == model.id)
             .all()
         )
 

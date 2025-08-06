@@ -31,6 +31,7 @@ class GerarQRCodeUseCase:
             # Retornar QR Code existente se ainda válido
             if pagamento_existente.esta_pendente():
                 return PagamentoResponse(
+                    id=pagamento_existente.id,
                     status="ok",
                     qrcode_url=pagamento_existente.qrcode_url,
                     qrcode_id=pagamento_existente.qrcode_id
@@ -57,6 +58,7 @@ class GerarQRCodeUseCase:
         pagamento = self.pagamento_gateway.salvar(pagamento)
 
         return PagamentoResponse(
+            id=pagamento.id,
             status="ok",
             qrcode_url=qr_data["qrcode_url"],
             qrcode_id=qr_data["preference_id"]
