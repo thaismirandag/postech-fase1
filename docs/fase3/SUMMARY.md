@@ -94,18 +94,6 @@ Cliente → API Gateway → Lambda (Auth) → Cognito → JWT Token
 - Documentação
 - Vídeo demonstrativo
 
-## 💰 **Estimativa de Custos**
-
-| Serviço | Custo Mensal |
-|---------|--------------|
-| API Gateway | $1-5 |
-| Lambda | $1-3 |
-| Cognito | $1-2 |
-| EKS (3 nodes) | $73 |
-| RDS PostgreSQL | $25-50 |
-| ECR | $1-2 |
-| **Total** | **$100-135/mês** |
-
 ## 🔒 **Segurança**
 
 ### **Medidas Implementadas:**
